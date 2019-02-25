@@ -1,0 +1,38 @@
+{
+    "generator-jhipster": {
+        "promptValues": {
+            "packageName": "org.udv.nrc.caixaudv",
+            "nativeLanguage": "pt-br"
+        },
+        "jhipsterVersion": "5.8.1",
+        "applicationType": "monolith",
+        "baseName": "caixaudv",
+        "packageName": "org.udv.nrc.caixaudv",
+        "packageFolder": "org/udv/nrc/caixaudv",
+        "serverPort": "8080",
+        "authenticationType": "jwt",
+        "cacheProvider": "ehcache",
+        "enableHibernateCache": true,
+        "websocket": "spring-websocket",
+        "databaseType": "sql",
+        "devDatabaseType": "h2Disk",
+        "prodDatabaseType": "mysql",
+        "searchEngine": false,
+        "messageBroker": false,
+        "serviceDiscoveryType": false,
+        "buildTool": "maven",
+        "enableSwaggerCodegen": false,
+        "clientFramework": "angularX",
+        "useSass": true,
+        "clientPackageManager": "npm",
+        "testFrameworks": ["gatling", "cucumber", "protractor"],
+        "jhiPrefix": "jhi",
+        "entitySuffix": "",
+        "dtoSuffix": "DTO",
+        "otherModules": [],
+        "enableTranslation": true,
+        "nativeLanguage": "pt-br",
+        "languages": ["pt-br", "en", "fr", "es", "de"],
+        "jwtSecretKey": "ZGMwZDU5YTI0MDFmNzNjYWY3MTY2NzMyMmRhZmY0NmNjOWI5OTc3YzE1MGRhM2NmY2E0NzdhYmIwYjEzMTk4Mjc2NzgzZTE0ZDI1YThmODUyMzY4MTE5YmFiNjdkZTRlMTdkN2E4ZjY2Yzc4ZTMzYzI4YTFiZWFmM2U3MjEyNTY="
+    }
+}
