@@ -5,6 +5,17 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
     <include file="config/liquibase/changelog/00000000000000_initial_schema.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190225171159_added_entity_Produto.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190225171200_added_entity_ItemCompra.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190225171201_added_entity_Compra.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190225171202_added_entity_SessaoCaixa.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190225171203_added_entity_Conta.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190225171204_added_entity_Ressarcimento.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
+    <include file="config/liquibase/changelog/20190225171200_added_entity_constraints_ItemCompra.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190225171201_added_entity_constraints_Compra.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190225171202_added_entity_constraints_SessaoCaixa.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190225171203_added_entity_constraints_Conta.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20190225171204_added_entity_constraints_Ressarcimento.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
 </databaseChangeLog>

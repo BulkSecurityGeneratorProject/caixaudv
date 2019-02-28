@@ -1,0 +1,68 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
+            <h2 id="jhi-compra-heading" jhiTranslate="caixaudvApp.compra.home.createOrEditLabel">Create or edit a Compra</h2>
+            <div>
+                <jhi-alert-error></jhi-alert-error>
+                <div class="form-group" [hidden]="!compra.id">
+                    <label for="id" jhiTranslate="global.field.id">ID</label>
+                    <input type="text" class="form-control" id="id" name="id"
+                        [(ngModel)]="compra.id" readonly />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="caixaudvApp.compra.valorTotal" for="field_valorTotal">Valor Total</label>
+                    <input type="number" class="form-control" name="valorTotal" id="field_valorTotal"
+                        [(ngModel)]="compra.valorTotal" required min="0" jhiMin="0"/>
+                    <div [hidden]="!(editForm.controls.valorTotal?.dirty && editForm.controls.valorTotal?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.valorTotal?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.controls.valorTotal?.errors?.min" jhiTranslate="entity.validation.min" [translateValues]="{ min: 0 }">
+                            This field should be at least 0.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.controls.valorTotal?.errors?.number" jhiTranslate="entity.validation.number">
+                            This field should be a number.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="caixaudvApp.compra.nomeSolic" for="field_nomeSolic">Nome Solic</label>
+                    <input type="text" class="form-control" name="nomeSolic" id="field_nomeSolic"
+                        [(ngModel)]="compra.nomeSolic" required/>
+                    <div [hidden]="!(editForm.controls.nomeSolic?.dirty && editForm.controls.nomeSolic?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.nomeSolic?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="caixaudvApp.compra.sessaoCaixa" for="field_sessaoCaixa">Sessao Caixa</label>
+                    <select class="form-control" id="field_sessaoCaixa" name="sessaoCaixa" [(ngModel)]="compra.sessaoCaixa" >
+                        <option [ngValue]="null"></option>
+                        <option [ngValue]="sessaoCaixaOption.id === compra.sessaoCaixa?.id ? compra.sessaoCaixa : sessaoCaixaOption" *ngFor="let sessaoCaixaOption of sessaocaixas; trackBy: trackSessaoCaixaById">{{sessaoCaixaOption.id}}</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="caixaudvApp.compra.conta" for="field_conta">Conta</label>
+                    <select class="form-control" id="field_conta" name="conta" [(ngModel)]="compra.conta" >
+                        <option [ngValue]="null"></option>
+                        <option [ngValue]="contaOption.id === compra.conta?.id ? compra.conta : contaOption" *ngFor="let contaOption of contas; trackBy: trackContaById">{{contaOption.id}}</option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <button type="button" id="cancel-save" class="btn btn-secondary"  (click)="previousState()">
+                    <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+                </button>
+                <button type="submit" id="save-entity" [disabled]="editForm.form.invalid || isSaving" class="btn btn-primary">
+                    <fa-icon [icon]="'save'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

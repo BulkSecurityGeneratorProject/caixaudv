@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <!--
+        Added the constraints for entity ItemCompra.
+    -->
+    <changeSet id="20190225171200-2" author="jhipster">
+        
+        <addForeignKeyConstraint baseColumnNames="produto_id"
+                                 baseTableName="item_compra"
+                                 constraintName="fk_item_compra_produto_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="produto"/>
+
+        <addForeignKeyConstraint baseColumnNames="compra_id"
+                                 baseTableName="item_compra"
+                                 constraintName="fk_item_compra_compra_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="compra"/>
+
+    </changeSet>
+</databaseChangeLog>

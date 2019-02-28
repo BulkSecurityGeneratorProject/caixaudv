@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <!--
+        Added the constraints for entity Ressarcimento.
+    -->
+    <changeSet id="20190225171204-2" author="jhipster">
+        
+        <addForeignKeyConstraint baseColumnNames="sessao_caixa_id"
+                                 baseTableName="ressarcimento"
+                                 constraintName="fk_ressarcimento_sessao_caixa_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="sessao_caixa"/>
+
+        <addForeignKeyConstraint baseColumnNames="conta_id"
+                                 baseTableName="ressarcimento"
+                                 constraintName="fk_ressarcimento_conta_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="conta"/>
+
+    </changeSet>
+</databaseChangeLog>

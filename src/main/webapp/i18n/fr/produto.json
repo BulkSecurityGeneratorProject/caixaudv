@@ -1,0 +1,24 @@
+{
+    "caixaudvApp": {
+        "produto": {
+            "home": {
+                "title": "Produtos",
+                "createLabel": "Créer un nouveau Produto",
+                "createOrEditLabel": "Créer ou éditer un Produto"
+            },
+            "created": "Un nouveau Produto a été créé avec l'identifiant {{ param }}",
+            "updated": "Le Produto avec l'identifiant {{ param }} a été mis à jour",
+            "deleted": "Le Produto avec l'identifiant {{ param }} a été supprimé",
+            "delete": {
+                "question": "Etes-vous certain de vouloir supprimer le Produto {{ id }} ?"
+            },
+            "detail": {
+                "title": "Produto"
+            },
+            "nome": "Nome",
+            "preco": "Preco",
+            "descricao": "Descricao",
+            "itensCompra": "Itens Compra"
+        }
+    }
+}

@@ -1,0 +1,39 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="itemCompra">
+            <h2><span jhiTranslate="caixaudvApp.itemCompra.detail.title">Item Compra</span> {{itemCompra.id}}</h2>
+            <hr>
+            <jhi-alert-error></jhi-alert-error>
+            <dl class="row-md jh-entity-details">
+                <dt><span jhiTranslate="caixaudvApp.itemCompra.quant">Quant</span></dt>
+                <dd>
+                    <span>{{itemCompra.quant}}</span>
+                </dd>
+                <dt><span jhiTranslate="caixaudvApp.itemCompra.produto">Produto</span></dt>
+                <dd>
+                    <div *ngIf="itemCompra.produto">
+                        <a [routerLink]="['/produto', itemCompra.produto?.id, 'view']">{{itemCompra.produto?.id}}</a>
+                    </div>
+                </dd>
+                <dt><span jhiTranslate="caixaudvApp.itemCompra.compra">Compra</span></dt>
+                <dd>
+                    <div *ngIf="itemCompra.compra">
+                        <a [routerLink]="['/compra', itemCompra.compra?.id, 'view']">{{itemCompra.compra?.id}}</a>
+                    </div>
+                </dd>
+            </dl>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+            </button>
+
+            <button type="button"
+                    [routerLink]="['/item-compra', itemCompra.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+            </button>
+        </div>
+    </div>
+</div>

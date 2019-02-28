@@ -1,0 +1,23 @@
+{
+    "caixaudvApp": {
+        "itemCompra": {
+            "home": {
+                "title": "Item Compras",
+                "createLabel": "Item Compra erstellen",
+                "createOrEditLabel": "Item Compra erstellen oder bearbeiten"
+            },
+            "created": "Item Compra erstellt mit ID {{ param }}",
+            "updated": "Item Compra aktualisiert mit ID {{ param }}",
+            "deleted": "Item Compra gelöscht mit ID {{ param }}",
+            "delete": {
+                "question": "Soll Item Compra {{ id }} wirklich dauerhaft gelöscht werden?"
+            },
+            "detail": {
+                "title": "Item Compra"
+            },
+            "quant": "Quant",
+            "produto": "Produto",
+            "compra": "Compra"
+        }
+    }
+}

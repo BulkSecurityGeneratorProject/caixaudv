@@ -1,0 +1,25 @@
+{
+    "caixaudvApp": {
+        "sessaoCaixa": {
+            "home": {
+                "title": "Sessao Caixas",
+                "createLabel": "Create a new Sessao Caixa",
+                "createOrEditLabel": "Create or edit a Sessao Caixa"
+            },
+            "created": "A new Sessao Caixa is created with identifier {{ param }}",
+            "updated": "A Sessao Caixa is updated with identifier {{ param }}",
+            "deleted": "A Sessao Caixa is deleted with identifier {{ param }}",
+            "delete": {
+                "question": "Are you sure you want to delete Sessao Caixa {{ id }}?"
+            },
+            "detail": {
+                "title": "Sessao Caixa"
+            },
+            "valorAtual": "Valor Atual",
+            "data": "Data",
+            "user": "User",
+            "compras": "Compras",
+            "ressarcimentos": "Ressarcimentos"
+        }
+    }
+}

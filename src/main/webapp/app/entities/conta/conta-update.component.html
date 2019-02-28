@@ -1,0 +1,76 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
+            <h2 id="jhi-conta-heading" jhiTranslate="caixaudvApp.conta.home.createOrEditLabel">Create or edit a Conta</h2>
+            <div>
+                <jhi-alert-error></jhi-alert-error>
+                <div class="form-group" [hidden]="!conta.id">
+                    <label for="id" jhiTranslate="global.field.id">ID</label>
+                    <input type="text" class="form-control" id="id" name="id"
+                        [(ngModel)]="conta.id" readonly />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="caixaudvApp.conta.saldoAtual" for="field_saldoAtual">Saldo Atual</label>
+                    <input type="number" class="form-control" name="saldoAtual" id="field_saldoAtual"
+                        [(ngModel)]="conta.saldoAtual" required/>
+                    <div [hidden]="!(editForm.controls.saldoAtual?.dirty && editForm.controls.saldoAtual?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.saldoAtual?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.controls.saldoAtual?.errors?.number" jhiTranslate="entity.validation.number">
+                            This field should be a number.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="caixaudvApp.conta.dataAbertura" for="field_dataAbertura">Data Abertura</label>
+                    <div class="input-group">
+                        <input id="field_dataAbertura" type="text" class="form-control" name="dataAbertura" ngbDatepicker  #dataAberturaDp="ngbDatepicker" [(ngModel)]="conta.dataAbertura"
+                        required/>
+                        <span class="input-group-append">
+                            <button type="button" class="btn btn-secondary" (click)="dataAberturaDp.toggle()"><fa-icon [icon]="'calendar-alt'"></fa-icon></button>
+                        </span>
+                    </div>
+                    <div [hidden]="!(editForm.controls.dataAbertura?.dirty && editForm.controls.dataAbertura?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.dataAbertura?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="caixaudvApp.conta.nivelPermissao" for="field_nivelPermissao">Nivel Permissao</label>
+                    <select class="form-control" name="nivelPermissao" [(ngModel)]="conta.nivelPermissao" id="field_nivelPermissao"  required>
+                        <option value="CANTINEIRO">{{'caixaudvApp.NivelPermissao.CANTINEIRO' | translate}}</option>
+                        <option value="OPERADOR">{{'caixaudvApp.NivelPermissao.OPERADOR' | translate}}</option>
+                        <option value="CLIENTE">{{'caixaudvApp.NivelPermissao.CLIENTE' | translate}}</option>
+                    </select>
+                    <div [hidden]="!(editForm.controls.nivelPermissao?.dirty && editForm.controls.nivelPermissao?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.nivelPermissao?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="caixaudvApp.conta.user" for="field_user">User</label>
+                    <select class="form-control" id="field_user" name="user" [(ngModel)]="conta.user" >
+                        <option [ngValue]="null"></option>
+                        <option [ngValue]="userOption.id === conta.user?.id ? conta.user : userOption" *ngFor="let userOption of users; trackBy: trackUserById">{{userOption.login}}</option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <button type="button" id="cancel-save" class="btn btn-secondary"  (click)="previousState()">
+                    <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+                </button>
+                <button type="submit" id="save-entity" [disabled]="editForm.form.invalid || isSaving" class="btn btn-primary">
+                    <fa-icon [icon]="'save'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

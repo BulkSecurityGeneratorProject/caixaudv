@@ -1,0 +1,10 @@
+{
+    "caixaudvApp": {
+        "NivelPermissao": {
+            "null": "",
+            "CANTINEIRO": "CANTINEIRO",
+            "OPERADOR": "OPERADOR",
+            "CLIENTE": "CLIENTE"
+        }
+    }
+}

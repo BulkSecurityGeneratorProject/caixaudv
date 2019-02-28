@@ -1,0 +1,24 @@
+{
+    "caixaudvApp": {
+        "ressarcimento": {
+            "home": {
+                "title": "Ressarcimentos",
+                "createLabel": "Créer un nouveau Ressarcimento",
+                "createOrEditLabel": "Créer ou éditer un Ressarcimento"
+            },
+            "created": "Un nouveau Ressarcimento a été créé avec l'identifiant {{ param }}",
+            "updated": "Le Ressarcimento avec l'identifiant {{ param }} a été mis à jour",
+            "deleted": "Le Ressarcimento avec l'identifiant {{ param }} a été supprimé",
+            "delete": {
+                "question": "Etes-vous certain de vouloir supprimer le Ressarcimento {{ id }} ?"
+            },
+            "detail": {
+                "title": "Ressarcimento"
+            },
+            "valor": "Valor",
+            "data": "Data",
+            "sessaoCaixa": "Sessao Caixa",
+            "conta": "Conta"
+        }
+    }
+}

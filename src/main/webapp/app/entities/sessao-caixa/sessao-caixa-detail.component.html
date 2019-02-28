@@ -1,0 +1,35 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="sessaoCaixa">
+            <h2><span jhiTranslate="caixaudvApp.sessaoCaixa.detail.title">Sessao Caixa</span> {{sessaoCaixa.id}}</h2>
+            <hr>
+            <jhi-alert-error></jhi-alert-error>
+            <dl class="row-md jh-entity-details">
+                <dt><span jhiTranslate="caixaudvApp.sessaoCaixa.valorAtual">Valor Atual</span></dt>
+                <dd>
+                    <span>{{sessaoCaixa.valorAtual}}</span>
+                </dd>
+                <dt><span jhiTranslate="caixaudvApp.sessaoCaixa.data">Data</span></dt>
+                <dd>
+                    <span>{{sessaoCaixa.data}}</span>
+                </dd>
+                <dt><span jhiTranslate="caixaudvApp.sessaoCaixa.user">User</span></dt>
+                <dd>
+                    {{sessaoCaixa.user?.login}}
+                </dd>
+            </dl>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+            </button>
+
+            <button type="button"
+                    [routerLink]="['/sessao-caixa', sessaoCaixa.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+            </button>
+        </div>
+    </div>
+</div>

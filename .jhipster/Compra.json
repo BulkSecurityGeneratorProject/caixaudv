@@ -1,0 +1,52 @@
+{
+    "name": "Compra",
+    "fields": [
+        {
+            "fieldName": "valorTotal",
+            "fieldType": "Float",
+            "fieldValidateRules": [
+                "required",
+                "min"
+            ],
+            "fieldValidateRulesMin": 0
+        },
+        {
+            "fieldName": "nomeSolic",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "sessaoCaixa",
+            "otherEntityName": "sessaoCaixa",
+            "otherEntityField": "id",
+            "otherEntityRelationshipName": "compras"
+        },
+        {
+            "relationshipType": "many-to-one",
+            "relationshipName": "conta",
+            "otherEntityName": "conta",
+            "otherEntityField": "id",
+            "otherEntityRelationshipName": "compras"
+        },
+        {
+            "relationshipType": "one-to-many",
+            "relationshipName": "itensCompra",
+            "otherEntityName": "itemCompra",
+            "otherEntityRelationshipName": "compra"
+        }
+    ],
+    "changelogDate": "20190225171201",
+    "entityTableName": "compra",
+    "dto": "no",
+    "pagination": "no",
+    "service": "no",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*"
+}

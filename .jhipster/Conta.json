@@ -1,0 +1,58 @@
+{
+    "name": "Conta",
+    "fields": [
+        {
+            "fieldName": "saldoAtual",
+            "fieldType": "Float",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "dataAbertura",
+            "fieldType": "LocalDate",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "nivelPermissao",
+            "fieldType": "NivelPermissao",
+            "fieldValues": "CANTINEIRO,OPERADOR,CLIENTE",
+            "fieldValidateRules": [
+                "required"
+            ]
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "one-to-one",
+            "relationshipName": "user",
+            "otherEntityName": "user",
+            "otherEntityField": "login",
+            "ownerSide": true,
+            "otherEntityRelationshipName": "conta"
+        },
+        {
+            "relationshipType": "one-to-many",
+            "relationshipName": "ressarcimentos",
+            "otherEntityName": "ressarcimento",
+            "otherEntityRelationshipName": "conta"
+        },
+        {
+            "relationshipType": "one-to-many",
+            "relationshipName": "compras",
+            "otherEntityName": "compra",
+            "otherEntityRelationshipName": "conta"
+        }
+    ],
+    "changelogDate": "20190225171203",
+    "entityTableName": "conta",
+    "dto": "no",
+    "pagination": "no",
+    "service": "no",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*"
+}

@@ -1,0 +1,25 @@
+{
+    "caixaudvApp": {
+        "compra": {
+            "home": {
+                "title": "Compras",
+                "createLabel": "Créer un nouveau Compra",
+                "createOrEditLabel": "Créer ou éditer un Compra"
+            },
+            "created": "Un nouveau Compra a été créé avec l'identifiant {{ param }}",
+            "updated": "Le Compra avec l'identifiant {{ param }} a été mis à jour",
+            "deleted": "Le Compra avec l'identifiant {{ param }} a été supprimé",
+            "delete": {
+                "question": "Etes-vous certain de vouloir supprimer le Compra {{ id }} ?"
+            },
+            "detail": {
+                "title": "Compra"
+            },
+            "valorTotal": "Valor Total",
+            "nomeSolic": "Nome Solic",
+            "sessaoCaixa": "Sessao Caixa",
+            "conta": "Conta",
+            "itensCompra": "Itens Compra"
+        }
+    }
+}

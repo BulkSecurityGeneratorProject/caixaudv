@@ -1,0 +1,26 @@
+{
+    "caixaudvApp": {
+        "conta": {
+            "home": {
+                "title": "Contas",
+                "createLabel": "Conta erstellen",
+                "createOrEditLabel": "Conta erstellen oder bearbeiten"
+            },
+            "created": "Conta erstellt mit ID {{ param }}",
+            "updated": "Conta aktualisiert mit ID {{ param }}",
+            "deleted": "Conta gelöscht mit ID {{ param }}",
+            "delete": {
+                "question": "Soll Conta {{ id }} wirklich dauerhaft gelöscht werden?"
+            },
+            "detail": {
+                "title": "Conta"
+            },
+            "saldoAtual": "Saldo Atual",
+            "dataAbertura": "Data Abertura",
+            "nivelPermissao": "Nivel Permissao",
+            "user": "User",
+            "ressarcimentos": "Ressarcimentos",
+            "compras": "Compras"
+        }
+    }
+}

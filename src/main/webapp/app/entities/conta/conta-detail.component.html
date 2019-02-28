@@ -1,0 +1,39 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="conta">
+            <h2><span jhiTranslate="caixaudvApp.conta.detail.title">Conta</span> {{conta.id}}</h2>
+            <hr>
+            <jhi-alert-error></jhi-alert-error>
+            <dl class="row-md jh-entity-details">
+                <dt><span jhiTranslate="caixaudvApp.conta.saldoAtual">Saldo Atual</span></dt>
+                <dd>
+                    <span>{{conta.saldoAtual}}</span>
+                </dd>
+                <dt><span jhiTranslate="caixaudvApp.conta.dataAbertura">Data Abertura</span></dt>
+                <dd>
+                    <span>{{conta.dataAbertura}}</span>
+                </dd>
+                <dt><span jhiTranslate="caixaudvApp.conta.nivelPermissao">Nivel Permissao</span></dt>
+                <dd>
+                    <span jhiTranslate="{{'caixaudvApp.NivelPermissao.' + conta.nivelPermissao}}">{{conta.nivelPermissao}}</span>
+                </dd>
+                <dt><span jhiTranslate="caixaudvApp.conta.user">User</span></dt>
+                <dd>
+                    {{conta.user?.login}}
+                </dd>
+            </dl>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+            </button>
+
+            <button type="button"
+                    [routerLink]="['/conta', conta.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+            </button>
+        </div>
+    </div>
+</div>

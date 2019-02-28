@@ -1,0 +1,25 @@
+{
+    "caixaudvApp": {
+        "compra": {
+            "home": {
+                "title": "Compras",
+                "createLabel": "Criar novo Compra",
+                "createOrEditLabel": "Criar ou editar Compra"
+            },
+            "created": "Um novo Compra foi criado com o identificador {{ param }}",
+            "updated": "Um Compra foi atualizado com o identificador {{ param }}",
+            "deleted": "Um Compra foi deletado com o identificador {{ param }}",
+            "delete": {
+                "question": "Tem certeza de que deseja excluir Compra {{ id }}?"
+            },
+            "detail": {
+                "title": "Compra"
+            },
+            "valorTotal": "Valor Total",
+            "nomeSolic": "Nome Solic",
+            "sessaoCaixa": "Sessao Caixa",
+            "conta": "Conta",
+            "itensCompra": "Itens Compra"
+        }
+    }
+}

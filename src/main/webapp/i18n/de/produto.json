@@ -1,0 +1,24 @@
+{
+    "caixaudvApp": {
+        "produto": {
+            "home": {
+                "title": "Produtos",
+                "createLabel": "Produto erstellen",
+                "createOrEditLabel": "Produto erstellen oder bearbeiten"
+            },
+            "created": "Produto erstellt mit ID {{ param }}",
+            "updated": "Produto aktualisiert mit ID {{ param }}",
+            "deleted": "Produto gelöscht mit ID {{ param }}",
+            "delete": {
+                "question": "Soll Produto {{ id }} wirklich dauerhaft gelöscht werden?"
+            },
+            "detail": {
+                "title": "Produto"
+            },
+            "nome": "Nome",
+            "preco": "Preco",
+            "descricao": "Descricao",
+            "itensCompra": "Itens Compra"
+        }
+    }
+}

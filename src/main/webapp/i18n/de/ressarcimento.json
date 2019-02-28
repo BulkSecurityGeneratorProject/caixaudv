@@ -1,0 +1,24 @@
+{
+    "caixaudvApp": {
+        "ressarcimento": {
+            "home": {
+                "title": "Ressarcimentos",
+                "createLabel": "Ressarcimento erstellen",
+                "createOrEditLabel": "Ressarcimento erstellen oder bearbeiten"
+            },
+            "created": "Ressarcimento erstellt mit ID {{ param }}",
+            "updated": "Ressarcimento aktualisiert mit ID {{ param }}",
+            "deleted": "Ressarcimento gelöscht mit ID {{ param }}",
+            "delete": {
+                "question": "Soll Ressarcimento {{ id }} wirklich dauerhaft gelöscht werden?"
+            },
+            "detail": {
+                "title": "Ressarcimento"
+            },
+            "valor": "Valor",
+            "data": "Data",
+            "sessaoCaixa": "Sessao Caixa",
+            "conta": "Conta"
+        }
+    }
+}
