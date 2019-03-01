@@ -1,18 +1,24 @@
 package org.udv.nrc.caixaudv.web.rest;
+import org.udv.nrc.caixaudv.domain.Conta;
 import org.udv.nrc.caixaudv.domain.SessaoCaixa;
+import org.udv.nrc.caixaudv.domain.enumeration.NivelPermissao;
+import org.udv.nrc.caixaudv.repository.ContaRepository;
 import org.udv.nrc.caixaudv.repository.SessaoCaixaRepository;
+import org.udv.nrc.caixaudv.security.UserAccountPermissionChecker;
 import org.udv.nrc.caixaudv.web.rest.errors.BadRequestAlertException;
+import org.udv.nrc.caixaudv.web.rest.errors.UserNotAuthorizedException;
 import org.udv.nrc.caixaudv.web.rest.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
-
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,6 +34,12 @@ public class SessaoCaixaResource {
     private static final String ENTITY_NAME = "sessaoCaixa";
 
     private final SessaoCaixaRepository sessaoCaixaRepository;
+
+    @Autowired
+    private ContaRepository contaRepository;
+
+    private final List<NivelPermissao> canCRAll = Arrays.asList(NivelPermissao.ADMIN, 
+        NivelPermissao.OPERADOR);
 
     public SessaoCaixaResource(SessaoCaixaRepository sessaoCaixaRepository) {
         this.sessaoCaixaRepository = sessaoCaixaRepository;
@@ -45,6 +57,10 @@ public class SessaoCaixaResource {
         log.debug("REST request to save SessaoCaixa : {}", sessaoCaixa);
         if (sessaoCaixa.getId() != null) {
             throw new BadRequestAlertException("A new sessaoCaixa cannot already have an ID", ENTITY_NAME, "idexists");
+        }
+        Conta contaTest = contaRepository.findByUserIsCurrentUser();
+        if(!UserAccountPermissionChecker.checkPermissao(contaTest, canCRAll)){
+            throw new UserNotAuthorizedException("Usuário não autorizado!", ENTITY_NAME, "missing_permission");
         }
         SessaoCaixa result = sessaoCaixaRepository.save(sessaoCaixa);
         return ResponseEntity.created(new URI("/api/sessao-caixas/" + result.getId()))
@@ -66,6 +82,10 @@ public class SessaoCaixaResource {
         log.debug("REST request to update SessaoCaixa : {}", sessaoCaixa);
         if (sessaoCaixa.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        Conta contaTest = contaRepository.findByUserIsCurrentUser();
+        if(!contaTest.getNivelPermissao().equals(NivelPermissao.ADMIN)){
+            throw new UserNotAuthorizedException("Usuário não autorizado!", ENTITY_NAME, "missing_permission");
         }
         SessaoCaixa result = sessaoCaixaRepository.save(sessaoCaixa);
         return ResponseEntity.ok()
@@ -106,6 +126,10 @@ public class SessaoCaixaResource {
     @DeleteMapping("/sessao-caixas/{id}")
     public ResponseEntity<Void> deleteSessaoCaixa(@PathVariable Long id) {
         log.debug("REST request to delete SessaoCaixa : {}", id);
+        Conta contaTest = contaRepository.findByUserIsCurrentUser();
+        if(!contaTest.getNivelPermissao().equals(NivelPermissao.ADMIN)){
+            throw new UserNotAuthorizedException("Usuário não autorizado!", ENTITY_NAME, "missing_permission");
+        }
         sessaoCaixaRepository.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }

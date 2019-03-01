@@ -118,8 +118,8 @@ public class RessarcimentoResource {
     @GetMapping("/ressarcimentos/{id}")
     public ResponseEntity<Ressarcimento> getRessarcimento(@PathVariable Long id) {
         log.debug("REST request to get Ressarcimento : {}", id);
-        Conta contaTest = contaRepository.findByUserIsCurrentUser();
         Optional<Ressarcimento> ressarcimento = ressarcimentoRepository.findById(id);
+        Conta contaTest = contaRepository.findByUserIsCurrentUser();
         if(ressarcimento.isPresent()){
             if(ressarcimento.get().getConta().equals(contaTest) || 
                     contaTest.getNivelPermissao().equals(NivelPermissao.ADMIN) ||
