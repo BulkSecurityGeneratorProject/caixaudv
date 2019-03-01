@@ -26,7 +26,6 @@ import org.udv.nrc.caixaudv.domain.enumeration.NivelPermissao;
 import org.udv.nrc.caixaudv.repository.CompraRepository;
 import org.udv.nrc.caixaudv.repository.ContaRepository;
 import org.udv.nrc.caixaudv.security.UserAccountPermissionChecker;
-import org.udv.nrc.caixaudv.security.UserNotActivatedException;
 import org.udv.nrc.caixaudv.web.rest.errors.BadRequestAlertException;
 import org.udv.nrc.caixaudv.web.rest.errors.UserNotAuthorizedException;
 import org.udv.nrc.caixaudv.web.rest.util.HeaderUtil;
@@ -69,7 +68,7 @@ public class CompraResource {
         }
         Conta contaTest = contaRepository.findByUserIsCurrentUser();
         if(!UserAccountPermissionChecker.checkPermissao(contaTest, canCRDAll)){
-            throw new UserNotAuthorizedException("Usuário não autorizado!", ENTITY_NAME, "not_authorized");
+            throw new UserNotAuthorizedException("Usuário não autorizado!", ENTITY_NAME, "missing_permission");
         }
         Compra result = compraRepository.save(compra);
             return ResponseEntity.created(new URI("/api/compras/" + result.getId()))
@@ -94,7 +93,7 @@ public class CompraResource {
         }
         Conta contaTest = contaRepository.findByUserIsCurrentUser();
         if(!contaTest.getNivelPermissao().equals(NivelPermissao.ADMIN)) {
-            throw new UserNotAuthorizedException("Usuário não autorizado!", ENTITY_NAME, "not_authorized");
+            throw new UserNotAuthorizedException("Usuário não autorizado!", ENTITY_NAME, "missing_permission");
         }
         Compra result = compraRepository.save(compra);
         return ResponseEntity.ok()
@@ -110,12 +109,8 @@ public class CompraResource {
     @GetMapping("/compras")
     public List<Compra> getAllCompras() {
         Conta contaTest = contaRepository.findByUserIsCurrentUser();
-        boolean isClient = contaTest.getNivelPermissao().equals(NivelPermissao.CLIENTE);
-        if(isClient){
+        if(!UserAccountPermissionChecker.checkPermissao(contaTest, canCRDAll)){
             return compraRepository.findByUserIsCurrentUser();
-        } 
-        else if(!isClient && !UserAccountPermissionChecker.checkPermissao(contaTest, canCRDAll)){
-            throw new UserNotAuthorizedException("Usuário não autorizado!", ENTITY_NAME, "not_authorized");
         }
         else return compraRepository.findAll();
     }
@@ -130,16 +125,13 @@ public class CompraResource {
     public ResponseEntity<Compra> getCompra(@PathVariable Long id) {
         log.debug("REST request to get Compra : {}", id);
         Conta contaTest = contaRepository.findByUserIsCurrentUser();
-        if(!UserAccountPermissionChecker.checkPermissao(contaTest, canCRDAll)){
-            throw new UserNotAuthorizedException("Usuário não autorizado!", ENTITY_NAME, "not_authorized");
-        }
         Optional<Compra> compra = compraRepository.findById(id);
         if(compra.isPresent()){
             if(compra.get().getConta().equals(contaTest) || 
                     contaTest.getNivelPermissao().equals(NivelPermissao.ADMIN) ||
                     contaTest.getNivelPermissao().equals(NivelPermissao.OPERADOR))
                 return ResponseEntity.ok(compra.get());
-            else throw new UserNotAuthorizedException("Usuário não autorizado!", ENTITY_NAME, "not_authorized");
+            else throw new UserNotAuthorizedException("Usuário não autorizado!", ENTITY_NAME, "missing_permission");
         }
         else return ResponseEntity.notFound().build();
     }
@@ -155,7 +147,7 @@ public class CompraResource {
         log.debug("REST request to delete Compra : {}", id);
         Conta contaTest = contaRepository.findByUserIsCurrentUser();
         if(!UserAccountPermissionChecker.checkPermissao(contaTest, canCRDAll)){
-            throw new UserNotAuthorizedException("Usuário não autorizado!", ENTITY_NAME, "not_authorized");
+            throw new UserNotAuthorizedException("Usuário não autorizado!", ENTITY_NAME, "missing_permission");
         }
         compraRepository.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
