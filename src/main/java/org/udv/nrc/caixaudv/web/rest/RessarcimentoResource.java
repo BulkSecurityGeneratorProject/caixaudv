@@ -1,18 +1,24 @@
 package org.udv.nrc.caixaudv.web.rest;
+import org.udv.nrc.caixaudv.domain.Conta;
 import org.udv.nrc.caixaudv.domain.Ressarcimento;
+import org.udv.nrc.caixaudv.domain.enumeration.NivelPermissao;
+import org.udv.nrc.caixaudv.repository.ContaRepository;
 import org.udv.nrc.caixaudv.repository.RessarcimentoRepository;
+import org.udv.nrc.caixaudv.security.UserAccountPermissionChecker;
 import org.udv.nrc.caixaudv.web.rest.errors.BadRequestAlertException;
+import org.udv.nrc.caixaudv.web.rest.errors.UserNotAuthorizedException;
 import org.udv.nrc.caixaudv.web.rest.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
-
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,6 +34,12 @@ public class RessarcimentoResource {
     private static final String ENTITY_NAME = "ressarcimento";
 
     private final RessarcimentoRepository ressarcimentoRepository;
+
+    @Autowired
+    private ContaRepository contaRepository;
+
+    private final List<NivelPermissao> canCRAll = Arrays.asList(NivelPermissao.ADMIN, 
+        NivelPermissao.OPERADOR);
 
     public RessarcimentoResource(RessarcimentoRepository ressarcimentoRepository) {
         this.ressarcimentoRepository = ressarcimentoRepository;
@@ -45,6 +57,10 @@ public class RessarcimentoResource {
         log.debug("REST request to save Ressarcimento : {}", ressarcimento);
         if (ressarcimento.getId() != null) {
             throw new BadRequestAlertException("A new ressarcimento cannot already have an ID", ENTITY_NAME, "idexists");
+        }
+        Conta contaTest = contaRepository.findByUserIsCurrentUser();
+        if(!UserAccountPermissionChecker.checkPermissao(contaTest, canCRAll)){
+            throw new UserNotAuthorizedException("Usuário não autorizado!", ENTITY_NAME, "missing_permission");
         }
         Ressarcimento result = ressarcimentoRepository.save(ressarcimento);
         return ResponseEntity.created(new URI("/api/ressarcimentos/" + result.getId()))
@@ -67,6 +83,10 @@ public class RessarcimentoResource {
         if (ressarcimento.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
+        Conta contaTest = contaRepository.findByUserIsCurrentUser();
+        if(!contaTest.getNivelPermissao().equals(NivelPermissao.ADMIN)){
+            throw new UserNotAuthorizedException("Usuário não autorizado!", ENTITY_NAME, "missing_permission");
+        }
         Ressarcimento result = ressarcimentoRepository.save(ressarcimento);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, ressarcimento.getId().toString()))
@@ -81,6 +101,11 @@ public class RessarcimentoResource {
     @GetMapping("/ressarcimentos")
     public List<Ressarcimento> getAllRessarcimentos() {
         log.debug("REST request to get all Ressarcimentos");
+        Conta contaTest = contaRepository.findByUserIsCurrentUser();
+        if(!UserAccountPermissionChecker.checkPermissao(contaTest, canCRAll)){
+            ressarcimentoRepository.findAll().stream()
+                .filter(ressarcimento -> ressarcimento.getConta().equals(contaTest));
+        }
         return ressarcimentoRepository.findAll();
     }
 

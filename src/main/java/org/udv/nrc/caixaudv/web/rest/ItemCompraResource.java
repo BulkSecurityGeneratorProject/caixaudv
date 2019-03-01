@@ -54,7 +54,7 @@ public class ItemCompraResource {
     }
 
     /**
-     * POST  /item-compra : Create a new itemCompra.
+     * POST  /item-compras : Create a new itemCompra.
      *
      * @param itemCompra the itemCompra to create
      * @return the ResponseEntity with status 201 (Created) and with body the new itemCompra, or with status 400 (Bad Request) if the itemCompra has already an ID
@@ -67,8 +67,8 @@ public class ItemCompraResource {
             throw new BadRequestAlertException("A new itemCompra cannot already have an ID", ENTITY_NAME, "idexists");
         }
         Conta contaTest = contaRepository.findByUserIsCurrentUser();
-        if(UserAccountPermissionChecker.checkPermissao(contaTest, canCRDAll)){
-            throw new UserNotAuthorizedException("Usuário não autorizado!", ENTITY_NAME, "not_authorized");
+        if(!UserAccountPermissionChecker.checkPermissao(contaTest, canCRDAll)){
+            throw new UserNotAuthorizedException("Usuário não autorizado!", ENTITY_NAME, "missing_permission");
         }
         ItemCompra result = itemCompraRepository.save(itemCompra);
             return ResponseEntity.created(new URI("/api/item-compras/" + result.getId()))
@@ -77,7 +77,7 @@ public class ItemCompraResource {
     }
 
     /**
-     * PUT  /item-compra : Updates an existing itemCompra.
+     * PUT  /item-compras : Updates an existing itemCompra.
      *
      * @param itemCompra the itemCompra to update
      * @return the ResponseEntity with status 200 (OK) and with body the updated itemCompra,
@@ -85,15 +85,15 @@ public class ItemCompraResource {
      * or with status 500 (Internal Server Error) if the itemCompra couldn't be updated
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
-    @PutMapping("/item-compra")
+    @PutMapping("/item-compras")
     public ResponseEntity<ItemCompra> updateItemCompra(@Valid @RequestBody ItemCompra itemCompra) throws URISyntaxException {
         log.debug("REST request to update ItemCompra : {}", itemCompra);
         if (itemCompra.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         Conta contaTest = contaRepository.findByUserIsCurrentUser();
-        if(contaTest.getNivelPermissao().equals(NivelPermissao.CLIENTE)) {
-            throw new UserNotAuthorizedException("Usuário não autorizado!", ENTITY_NAME, "not_authorized");
+        if(!contaTest.getNivelPermissao().equals(NivelPermissao.ADMIN)) {
+            throw new UserNotAuthorizedException("Usuário não autorizado!", ENTITY_NAME, "missing_permission");
         }
         ItemCompra result = itemCompraRepository.save(itemCompra);
         return ResponseEntity.ok()
@@ -109,28 +109,24 @@ public class ItemCompraResource {
     @GetMapping("/item-compras")
     public List<ItemCompra> getAllItemCompras() {
         Conta contaTest = contaRepository.findByUserIsCurrentUser();
-        boolean isClient = contaTest.getNivelPermissao().equals(NivelPermissao.CLIENTE);
-        if(isClient){
-            return itemCompraRepository.findByUserIsCurrentUser();
-        } 
-        else if(!isClient && !UserAccountPermissionChecker.checkPermissao(contaTest, canCRDAll)){
-            throw new UserNotAuthorizedException("Usuário não autorizado!", ENTITY_NAME, "not_authorized");
+        if(UserAccountPermissionChecker.checkPermissao(contaTest, canCRDAll)){
+            return itemCompraRepository.findAll();
         }
-        else return itemCompraRepository.findAll();
+        else return itemCompraRepository.findByUserIsCurrentUser();
     }
 
     /**
-     * GET  /item-compra/:id : get the "id" itemCompra.
+     * GET  /item-compras/:id : get the "id" itemCompra.
      *
      * @param id the id of the itemCompra to retrieve
      * @return the ResponseEntity with status 200 (OK) and with body the itemCompra, or with status 404 (Not Found)
      */
-    @GetMapping("/item-compra/{id}")
+    @GetMapping("/item-compras/{id}")
     public ResponseEntity<ItemCompra> getItemCompra(@PathVariable Long id) {
         log.debug("REST request to get ItemCompra : {}", id);
         Conta contaTest = contaRepository.findByUserIsCurrentUser();
         if(!UserAccountPermissionChecker.checkPermissao(contaTest, canCRDAll)){
-            throw new UserNotAuthorizedException("Usuário não autorizado!", ENTITY_NAME, "not_authorized");
+            throw new UserNotAuthorizedException("Usuário não autorizado!", ENTITY_NAME, "missing_permission");
         }
         Optional<ItemCompra> itemCompra = itemCompraRepository.findById(id);
         if(itemCompra.isPresent()){
@@ -138,23 +134,23 @@ public class ItemCompraResource {
                     contaTest.getNivelPermissao().equals(NivelPermissao.ADMIN) ||
                     contaTest.getNivelPermissao().equals(NivelPermissao.OPERADOR))
                 return ResponseEntity.ok(itemCompra.get());
-            else throw new UserNotAuthorizedException("Usuário não autorizado!", ENTITY_NAME, "not_authorized");
+            else throw new UserNotAuthorizedException("Usuário não autorizado!", ENTITY_NAME, "missing_permission");
         }
         else return ResponseEntity.notFound().build();
     }
 
     /**
-     * DELETE  /item-compra/:id : delete the "id" itemCompra.
+     * DELETE  /item-compras/:id : delete the "id" itemCompra.
      *
      * @param id the id of the itemCompra to delete
      * @return the ResponseEntity with status 200 (OK)
      */
-    @DeleteMapping("/item-compra/{id}")
+    @DeleteMapping("/item-compras/{id}")
     public ResponseEntity<Void> deleteItemCompra(@PathVariable Long id) {
         log.debug("REST request to delete ItemCompra : {}", id);
         Conta contaTest = contaRepository.findByUserIsCurrentUser();
         if(!UserAccountPermissionChecker.checkPermissao(contaTest, canCRDAll)){
-            throw new UserNotAuthorizedException("Usuário não autorizado!", ENTITY_NAME, "not_authorized");
+            throw new UserNotAuthorizedException("Usuário não autorizado!", ENTITY_NAME, "missing_permission");
         }
         itemCompraRepository.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();

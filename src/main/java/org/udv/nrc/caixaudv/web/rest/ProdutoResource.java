@@ -39,7 +39,7 @@ public class ProdutoResource {
     @Autowired
     private ContaRepository contaRepository;
 
-    private final List<NivelPermissao> canCRUDAll = Arrays.asList(NivelPermissao.ADMIN,
+    private final List<NivelPermissao> canRAll = Arrays.asList(NivelPermissao.ADMIN,
         NivelPermissao.OPERADOR);
 
     public ProdutoResource(ProdutoRepository produtoRepository) {
@@ -61,7 +61,7 @@ public class ProdutoResource {
         }
         Conta contaTest = contaRepository.findByUserIsCurrentUser();
         if(!contaTest.getNivelPermissao().equals(NivelPermissao.ADMIN)){
-            throw new BadRequestAlertException("Usuário não autorizado!", ENTITY_NAME, "not_authorized");
+            throw new BadRequestAlertException("Usuário não autorizado!", ENTITY_NAME, "missing_permission");
         }
         Produto result = produtoRepository.save(produto);
             return ResponseEntity.created(new URI("/api/produtos/" + result.getId()))
@@ -86,7 +86,7 @@ public class ProdutoResource {
         }
         Conta contaTest = contaRepository.findByUserIsCurrentUser();
         if(!contaTest.getNivelPermissao().equals(NivelPermissao.ADMIN)){
-            throw new BadRequestAlertException("Usuário não autorizado!", ENTITY_NAME, "not_authorized");
+            throw new BadRequestAlertException("Usuário não autorizado!", ENTITY_NAME, "missing_permission");
         }
         Produto result = produtoRepository.save(produto);
         return ResponseEntity.ok()
@@ -103,8 +103,8 @@ public class ProdutoResource {
     public List<Produto> getAllProdutos() {
         log.debug("REST request to get all Produtos");
         Conta contaTest = contaRepository.findByUserIsCurrentUser();
-        if(UserAccountPermissionChecker.checkPermissao(contaTest, canCRUDAll)){
-            throw new BadRequestAlertException("Usuário não autorizado!", ENTITY_NAME, "not_authorized");
+        if(!UserAccountPermissionChecker.checkPermissao(contaTest, canRAll)){
+            throw new BadRequestAlertException("Usuário não autorizado!", ENTITY_NAME, "missing_permission");
         }
         return produtoRepository.findAll();
     }
@@ -119,8 +119,8 @@ public class ProdutoResource {
     public ResponseEntity<Produto> getProduto(@PathVariable Long id) {
         log.debug("REST request to get Produto : {}", id);
         Conta contaTest = contaRepository.findByUserIsCurrentUser();
-        if(UserAccountPermissionChecker.checkPermissao(contaTest, canCRUDAll)){
-            throw new BadRequestAlertException("Usuário não autorizado!", ENTITY_NAME, "not_authorized");
+        if(!UserAccountPermissionChecker.checkPermissao(contaTest, canRAll)){
+            throw new BadRequestAlertException("Usuário não autorizado!", ENTITY_NAME, "missing_permission");
         }
         Optional<Produto> produto = produtoRepository.findById(id);
         return ResponseUtil.wrapOrNotFound(produto);
@@ -137,7 +137,7 @@ public class ProdutoResource {
         log.debug("REST request to delete Produto : {}", id);
         Conta contaTest = contaRepository.findByUserIsCurrentUser();
         if(!contaTest.getNivelPermissao().equals(NivelPermissao.ADMIN)){
-            throw new BadRequestAlertException("Usuário não autorizado!", ENTITY_NAME, "not_authorized");
+            throw new BadRequestAlertException("Usuário não autorizado!", ENTITY_NAME, "missing_permission");
         }
         produtoRepository.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
