@@ -58,8 +58,8 @@ public class SessaoCaixaResource {
         if (sessaoCaixa.getId() != null) {
             throw new BadRequestAlertException("A new sessaoCaixa cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Conta contaTest = contaRepository.findByUserIsCurrentUser();
-        if(!UserAccountPermissionChecker.checkPermissao(contaTest, canCRAll)){
+        Conta currentConta = contaRepository.findByUserIsCurrentUser();
+        if(!UserAccountPermissionChecker.checkPermissao(currentConta, canCRAll)){
             throw new UserNotAuthorizedException("Usuário não autorizado!", ENTITY_NAME, "missing_permission");
         }
         SessaoCaixa result = sessaoCaixaRepository.save(sessaoCaixa);
@@ -83,8 +83,8 @@ public class SessaoCaixaResource {
         if (sessaoCaixa.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        Conta contaTest = contaRepository.findByUserIsCurrentUser();
-        if(!contaTest.getNivelPermissao().equals(NivelPermissao.ADMIN)){
+        Conta currentConta = contaRepository.findByUserIsCurrentUser();
+        if(!currentConta.getNivelPermissao().equals(NivelPermissao.ADMIN)){
             throw new UserNotAuthorizedException("Usuário não autorizado!", ENTITY_NAME, "missing_permission");
         }
         SessaoCaixa result = sessaoCaixaRepository.save(sessaoCaixa);
@@ -126,8 +126,8 @@ public class SessaoCaixaResource {
     @DeleteMapping("/sessao-caixas/{id}")
     public ResponseEntity<Void> deleteSessaoCaixa(@PathVariable Long id) {
         log.debug("REST request to delete SessaoCaixa : {}", id);
-        Conta contaTest = contaRepository.findByUserIsCurrentUser();
-        if(!contaTest.getNivelPermissao().equals(NivelPermissao.ADMIN)){
+        Conta currentConta = contaRepository.findByUserIsCurrentUser();
+        if(!currentConta.getNivelPermissao().equals(NivelPermissao.ADMIN)){
             throw new UserNotAuthorizedException("Usuário não autorizado!", ENTITY_NAME, "missing_permission");
         }
         sessaoCaixaRepository.deleteById(id);

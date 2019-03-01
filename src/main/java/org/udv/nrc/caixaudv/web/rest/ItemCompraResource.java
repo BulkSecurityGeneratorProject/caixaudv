@@ -66,8 +66,8 @@ public class ItemCompraResource {
         if (itemCompra.getId() != null) {
             throw new BadRequestAlertException("A new itemCompra cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Conta contaTest = contaRepository.findByUserIsCurrentUser();
-        if(!UserAccountPermissionChecker.checkPermissao(contaTest, canCRDAll)){
+        Conta currentConta = contaRepository.findByUserIsCurrentUser();
+        if(!UserAccountPermissionChecker.checkPermissao(currentConta, canCRDAll)){
             throw new UserNotAuthorizedException("Usuário não autorizado!", ENTITY_NAME, "missing_permission");
         }
         ItemCompra result = itemCompraRepository.save(itemCompra);
@@ -91,8 +91,8 @@ public class ItemCompraResource {
         if (itemCompra.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        Conta contaTest = contaRepository.findByUserIsCurrentUser();
-        if(!contaTest.getNivelPermissao().equals(NivelPermissao.ADMIN)) {
+        Conta currentConta = contaRepository.findByUserIsCurrentUser();
+        if(!currentConta.getNivelPermissao().equals(NivelPermissao.ADMIN)) {
             throw new UserNotAuthorizedException("Usuário não autorizado!", ENTITY_NAME, "missing_permission");
         }
         ItemCompra result = itemCompraRepository.save(itemCompra);
@@ -108,8 +108,8 @@ public class ItemCompraResource {
      */
     @GetMapping("/item-compras")
     public List<ItemCompra> getAllItemCompras() {
-        Conta contaTest = contaRepository.findByUserIsCurrentUser();
-        if(UserAccountPermissionChecker.checkPermissao(contaTest, canCRDAll)){
+        Conta currentConta = contaRepository.findByUserIsCurrentUser();
+        if(UserAccountPermissionChecker.checkPermissao(currentConta, canCRDAll)){
             return itemCompraRepository.findAll();
         }
         else return itemCompraRepository.findByUserIsCurrentUser();
@@ -124,12 +124,12 @@ public class ItemCompraResource {
     @GetMapping("/item-compras/{id}")
     public ResponseEntity<ItemCompra> getItemCompra(@PathVariable Long id) {
         log.debug("REST request to get ItemCompra : {}", id);
-        Conta contaTest = contaRepository.findByUserIsCurrentUser();
+        Conta currentConta = contaRepository.findByUserIsCurrentUser();
         Optional<ItemCompra> itemCompra = itemCompraRepository.findById(id);
         if(itemCompra.isPresent()){
-            if(itemCompra.get().getCompra().getConta().equals(contaTest) || 
-                    contaTest.getNivelPermissao().equals(NivelPermissao.ADMIN) ||
-                    contaTest.getNivelPermissao().equals(NivelPermissao.OPERADOR))
+            if(itemCompra.get().getCompra().getConta().equals(currentConta) || 
+                    currentConta.getNivelPermissao().equals(NivelPermissao.ADMIN) ||
+                    currentConta.getNivelPermissao().equals(NivelPermissao.OPERADOR))
                 return ResponseEntity.ok(itemCompra.get());
             else throw new UserNotAuthorizedException("Usuário não autorizado!", ENTITY_NAME, "missing_permission");
         }
@@ -145,8 +145,8 @@ public class ItemCompraResource {
     @DeleteMapping("/item-compras/{id}")
     public ResponseEntity<Void> deleteItemCompra(@PathVariable Long id) {
         log.debug("REST request to delete ItemCompra : {}", id);
-        Conta contaTest = contaRepository.findByUserIsCurrentUser();
-        if(!UserAccountPermissionChecker.checkPermissao(contaTest, canCRDAll)){
+        Conta currentConta = contaRepository.findByUserIsCurrentUser();
+        if(!UserAccountPermissionChecker.checkPermissao(currentConta, canCRDAll)){
             throw new UserNotAuthorizedException("Usuário não autorizado!", ENTITY_NAME, "missing_permission");
         }
         itemCompraRepository.deleteById(id);

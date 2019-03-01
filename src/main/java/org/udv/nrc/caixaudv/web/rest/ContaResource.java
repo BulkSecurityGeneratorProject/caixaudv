@@ -1,18 +1,22 @@
 package org.udv.nrc.caixaudv.web.rest;
 import org.udv.nrc.caixaudv.domain.Conta;
+import org.udv.nrc.caixaudv.domain.enumeration.NivelPermissao;
 import org.udv.nrc.caixaudv.repository.ContaRepository;
+import org.udv.nrc.caixaudv.security.UserAccountPermissionChecker;
 import org.udv.nrc.caixaudv.web.rest.errors.BadRequestAlertException;
+import org.udv.nrc.caixaudv.web.rest.errors.UserNotAuthorizedException;
 import org.udv.nrc.caixaudv.web.rest.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
-
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,6 +33,9 @@ public class ContaResource {
 
     private final ContaRepository contaRepository;
 
+    private final List<NivelPermissao> canCRAll = Arrays.asList(NivelPermissao.ADMIN, 
+        NivelPermissao.OPERADOR);
+
     public ContaResource(ContaRepository contaRepository) {
         this.contaRepository = contaRepository;
     }
@@ -36,17 +43,26 @@ public class ContaResource {
     /**
      * POST  /contas : Create a new conta.
      *
-     * @param conta the conta to create
+     * @param newConta the conta to create
      * @return the ResponseEntity with status 201 (Created) and with body the new conta, or with status 400 (Bad Request) if the conta has already an ID
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PostMapping("/contas")
-    public ResponseEntity<Conta> createConta(@Valid @RequestBody Conta conta) throws URISyntaxException {
-        log.debug("REST request to save Conta : {}", conta);
-        if (conta.getId() != null) {
+    public ResponseEntity<Conta> createConta(@Valid @RequestBody Conta newConta) throws URISyntaxException {
+        log.debug("REST request to save Conta : {}", newConta);
+        if (newConta.getId() != null) {
             throw new BadRequestAlertException("A new conta cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Conta result = contaRepository.save(conta);
+        Conta currentConta = contaRepository.findByUserIsCurrentUser();
+        if(!UserAccountPermissionChecker.checkPermissao(currentConta, canCRAll)){
+            throw new UserNotAuthorizedException("Usuário não autorizado!", ENTITY_NAME, "missing_permission");
+        }
+        if(!newConta.getNivelPermissao().equals(NivelPermissao.CLIENTE) &&
+                !currentConta.getNivelPermissao().equals(NivelPermissao.ADMIN)){
+            throw new BadRequestAlertException("Apenas conta CLIENTE é permitido criar para usuário não-administrativo", 
+                ENTITY_NAME, "illegal_account_creating");
+        }
+        Conta result = contaRepository.save(newConta);
         return ResponseEntity.created(new URI("/api/contas/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -67,6 +83,10 @@ public class ContaResource {
         if (conta.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
+        Conta currentConta = contaRepository.findByUserIsCurrentUser();
+        if(!currentConta.getNivelPermissao().equals(NivelPermissao.ADMIN)){
+            throw new UserNotAuthorizedException("Usuário não autorizado!", ENTITY_NAME, "missing_permission");
+        }
         Conta result = contaRepository.save(conta);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, conta.getId().toString()))
@@ -79,6 +99,8 @@ public class ContaResource {
      * @return the ResponseEntity with status 200 (OK) and the list of contas in body
      */
     @GetMapping("/contas")
+    @PreAuthorize("contaRepository.findByUserIsCurrentUser()" +
+        ".getNivelPermissao().equals(NivelPermissao.OPERADOR)")
     public List<Conta> getAllContas() {
         log.debug("REST request to get all Contas");
         return contaRepository.findAll();
@@ -94,7 +116,15 @@ public class ContaResource {
     public ResponseEntity<Conta> getConta(@PathVariable Long id) {
         log.debug("REST request to get Conta : {}", id);
         Optional<Conta> conta = contaRepository.findById(id);
-        return ResponseUtil.wrapOrNotFound(conta);
+        Conta currentConta = contaRepository.findByUserIsCurrentUser();
+        if(conta.isPresent()) {
+            if(conta.get().equals(currentConta) || 
+                    currentConta.getNivelPermissao().equals(NivelPermissao.ADMIN) ||
+                    currentConta.getNivelPermissao().equals(NivelPermissao.OPERADOR))
+                return ResponseEntity.ok(conta.get());
+            else throw new UserNotAuthorizedException("Usuário não autorizado!", ENTITY_NAME, "missing_permission");
+        }
+        return ResponseEntity.notFound().build();
     }
 
     /**
@@ -106,6 +136,10 @@ public class ContaResource {
     @DeleteMapping("/contas/{id}")
     public ResponseEntity<Void> deleteConta(@PathVariable Long id) {
         log.debug("REST request to delete Conta : {}", id);
+        Conta currentConta = contaRepository.findByUserIsCurrentUser();
+        if(!currentConta.getNivelPermissao().equals(NivelPermissao.ADMIN)){
+            throw new UserNotAuthorizedException("Usuário não autorizado!", ENTITY_NAME, "missing_permission");
+        }
         contaRepository.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }

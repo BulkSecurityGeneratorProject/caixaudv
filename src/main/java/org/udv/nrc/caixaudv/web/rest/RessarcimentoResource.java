@@ -8,7 +8,7 @@ import org.udv.nrc.caixaudv.security.UserAccountPermissionChecker;
 import org.udv.nrc.caixaudv.web.rest.errors.BadRequestAlertException;
 import org.udv.nrc.caixaudv.web.rest.errors.UserNotAuthorizedException;
 import org.udv.nrc.caixaudv.web.rest.util.HeaderUtil;
-import io.github.jhipster.web.util.ResponseUtil;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,8 +58,8 @@ public class RessarcimentoResource {
         if (ressarcimento.getId() != null) {
             throw new BadRequestAlertException("A new ressarcimento cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Conta contaTest = contaRepository.findByUserIsCurrentUser();
-        if(!UserAccountPermissionChecker.checkPermissao(contaTest, canCRAll)){
+        Conta currentConta = contaRepository.findByUserIsCurrentUser();
+        if(!UserAccountPermissionChecker.checkPermissao(currentConta, canCRAll)){
             throw new UserNotAuthorizedException("Usuário não autorizado!", ENTITY_NAME, "missing_permission");
         }
         Ressarcimento result = ressarcimentoRepository.save(ressarcimento);
@@ -83,8 +83,8 @@ public class RessarcimentoResource {
         if (ressarcimento.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        Conta contaTest = contaRepository.findByUserIsCurrentUser();
-        if(!contaTest.getNivelPermissao().equals(NivelPermissao.ADMIN)){
+        Conta currentConta = contaRepository.findByUserIsCurrentUser();
+        if(!currentConta.getNivelPermissao().equals(NivelPermissao.ADMIN)){
             throw new UserNotAuthorizedException("Usuário não autorizado!", ENTITY_NAME, "missing_permission");
         }
         Ressarcimento result = ressarcimentoRepository.save(ressarcimento);
@@ -101,10 +101,10 @@ public class RessarcimentoResource {
     @GetMapping("/ressarcimentos")
     public List<Ressarcimento> getAllRessarcimentos() {
         log.debug("REST request to get all Ressarcimentos");
-        Conta contaTest = contaRepository.findByUserIsCurrentUser();
-        if(!UserAccountPermissionChecker.checkPermissao(contaTest, canCRAll)){
+        Conta currentConta = contaRepository.findByUserIsCurrentUser();
+        if(!UserAccountPermissionChecker.checkPermissao(currentConta, canCRAll)){
             ressarcimentoRepository.findAll().stream()
-                .filter(ressarcimento -> ressarcimento.getConta().equals(contaTest));
+                .filter(ressarcimento -> ressarcimento.getConta().equals(currentConta));
         }
         return ressarcimentoRepository.findAll();
     }
@@ -119,11 +119,11 @@ public class RessarcimentoResource {
     public ResponseEntity<Ressarcimento> getRessarcimento(@PathVariable Long id) {
         log.debug("REST request to get Ressarcimento : {}", id);
         Optional<Ressarcimento> ressarcimento = ressarcimentoRepository.findById(id);
-        Conta contaTest = contaRepository.findByUserIsCurrentUser();
+        Conta currentConta = contaRepository.findByUserIsCurrentUser();
         if(ressarcimento.isPresent()){
-            if(ressarcimento.get().getConta().equals(contaTest) || 
-                    contaTest.getNivelPermissao().equals(NivelPermissao.ADMIN) ||
-                    contaTest.getNivelPermissao().equals(NivelPermissao.OPERADOR))
+            if(ressarcimento.get().getConta().equals(currentConta) || 
+                    currentConta.getNivelPermissao().equals(NivelPermissao.ADMIN) ||
+                    currentConta.getNivelPermissao().equals(NivelPermissao.OPERADOR))
                 return ResponseEntity.ok(ressarcimento.get());
             else throw new UserNotAuthorizedException("Usuário não autorizado!", ENTITY_NAME, "missing_permission");
         }
@@ -139,8 +139,8 @@ public class RessarcimentoResource {
     @DeleteMapping("/ressarcimentos/{id}")
     public ResponseEntity<Void> deleteRessarcimento(@PathVariable Long id) {
         log.debug("REST request to delete Ressarcimento : {}", id);
-        Conta contaTest = contaRepository.findByUserIsCurrentUser();
-        if(!contaTest.getNivelPermissao().equals(NivelPermissao.ADMIN)) {
+        Conta currentConta = contaRepository.findByUserIsCurrentUser();
+        if(!currentConta.getNivelPermissao().equals(NivelPermissao.ADMIN)) {
             throw new UserNotAuthorizedException("Usuário não autorizado!", ENTITY_NAME, "missing_permission");
         }
         ressarcimentoRepository.deleteById(id);
