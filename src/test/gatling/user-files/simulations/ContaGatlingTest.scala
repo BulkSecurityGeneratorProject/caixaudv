@@ -74,7 +74,7 @@ class ContaGatlingTest extends Simulation {
                 "id":null
                 , "saldoAtual":null
                 , "dataAbertura":"2020-01-01T00:00:00.000Z"
-                , "nivelPermissao":"CANTINEIRO"
+                , "nivelPermissao":"ADMIN"
                 }""")).asJSON
             .check(status.is(201))
             .check(headerRegex("Location", "(.*)").saveAs("new_conta_url"))).exitHereIfFailed

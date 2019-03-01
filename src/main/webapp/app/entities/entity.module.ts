@@ -27,6 +27,10 @@ import { RouterModule } from '@angular/router';
             {
                 path: 'ressarcimento',
                 loadChildren: './ressarcimento/ressarcimento.module#CaixaudvRessarcimentoModule'
+            },
+            {
+                path: 'conta',
+                loadChildren: './conta/conta.module#CaixaudvContaModule'
             }
             /* jhipster-needle-add-entity-route - JHipster will add entity modules routes here */
         ])

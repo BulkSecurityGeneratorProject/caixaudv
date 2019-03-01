@@ -11,5 +11,6 @@ import org.springframework.stereotype.Repository;
 @SuppressWarnings("unused")
 @Repository
 public interface ContaRepository extends JpaRepository<Conta, Long> {
-
+    @Query("select conta from Conta conta where conta.user.login = ?#{principal.username}")
+    Conta findByUserIsCurrentUser();
 }

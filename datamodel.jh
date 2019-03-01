@@ -20,8 +20,9 @@ entity SessaoCaixa {
 
 //Conta enum
 enum NivelPermissao{
-    CANTINEIRO,
+    ADMIN,
     OPERADOR,
+    CANTINEIRO,
     CLIENTE
 }
 

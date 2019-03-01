@@ -4,6 +4,7 @@ import org.udv.nrc.caixaudv.CaixaudvApp;
 
 import org.udv.nrc.caixaudv.domain.Compra;
 import org.udv.nrc.caixaudv.repository.CompraRepository;
+import org.udv.nrc.caixaudv.repository.ContaRepository;
 import org.udv.nrc.caixaudv.web.rest.errors.ExceptionTranslator;
 
 import org.junit.Before;

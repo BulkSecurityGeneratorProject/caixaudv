@@ -43,8 +43,9 @@
                 <div class="form-group">
                     <label class="form-control-label" jhiTranslate="caixaudvApp.conta.nivelPermissao" for="field_nivelPermissao">Nivel Permissao</label>
                     <select class="form-control" name="nivelPermissao" [(ngModel)]="conta.nivelPermissao" id="field_nivelPermissao"  required>
-                        <option value="CANTINEIRO">{{'caixaudvApp.NivelPermissao.CANTINEIRO' | translate}}</option>
+                        <option value="ADMIN">{{'caixaudvApp.NivelPermissao.ADMIN' | translate}}</option>
                         <option value="OPERADOR">{{'caixaudvApp.NivelPermissao.OPERADOR' | translate}}</option>
+                        <option value="CANTINEIRO">{{'caixaudvApp.NivelPermissao.CANTINEIRO' | translate}}</option>
                         <option value="CLIENTE">{{'caixaudvApp.NivelPermissao.CLIENTE' | translate}}</option>
                     </select>
                     <div [hidden]="!(editForm.controls.nivelPermissao?.dirty && editForm.controls.nivelPermissao?.invalid)">

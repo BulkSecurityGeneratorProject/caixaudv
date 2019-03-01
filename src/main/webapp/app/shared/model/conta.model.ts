@@ -4,8 +4,9 @@ import { IRessarcimento } from 'app/shared/model/ressarcimento.model';
 import { ICompra } from 'app/shared/model/compra.model';
 
 export const enum NivelPermissao {
-    CANTINEIRO = 'CANTINEIRO',
+    ADMIN = 'ADMIN',
     OPERADOR = 'OPERADOR',
+    CANTINEIRO = 'CANTINEIRO',
     CLIENTE = 'CLIENTE'
 }
 

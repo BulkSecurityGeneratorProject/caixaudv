@@ -49,7 +49,7 @@ public class ContaResourceIntTest {
     private static final LocalDate DEFAULT_DATA_ABERTURA = LocalDate.ofEpochDay(0L);
     private static final LocalDate UPDATED_DATA_ABERTURA = LocalDate.now(ZoneId.systemDefault());
 
-    private static final NivelPermissao DEFAULT_NIVEL_PERMISSAO = NivelPermissao.CANTINEIRO;
+    private static final NivelPermissao DEFAULT_NIVEL_PERMISSAO = NivelPermissao.ADMIN;
     private static final NivelPermissao UPDATED_NIVEL_PERMISSAO = NivelPermissao.OPERADOR;
 
     @Autowired

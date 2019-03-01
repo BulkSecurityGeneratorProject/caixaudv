@@ -51,7 +51,7 @@
                     <label class="form-control-label" jhiTranslate="caixaudvApp.compra.conta" for="field_conta">Conta</label>
                     <select class="form-control" id="field_conta" name="conta" [(ngModel)]="compra.conta" >
                         <option [ngValue]="null"></option>
-                        <option [ngValue]="contaOption.id === compra.conta?.id ? compra.conta : contaOption" *ngFor="let contaOption of contas; trackBy: trackContaById">{{contaOption.id}}</option>
+                        <option [ngValue]="contaOption.id === compra.conta?.id ? compra.conta : contaOption" *ngFor="let contaOption of contas; trackBy: trackContaById">{{contaOption.user?.login}}</option>
                     </select>
                 </div>
             </div>

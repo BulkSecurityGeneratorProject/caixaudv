@@ -25,7 +25,7 @@ describe('Service Tests', () => {
             httpMock = injector.get(HttpTestingController);
             currentDate = moment();
 
-            elemDefault = new Conta(0, 0, currentDate, NivelPermissao.CANTINEIRO);
+            elemDefault = new Conta(0, 0, currentDate, NivelPermissao.ADMIN);
         });
 
         describe('Service methods', async () => {
