@@ -125,9 +125,6 @@ public class ItemCompraResource {
     public ResponseEntity<ItemCompra> getItemCompra(@PathVariable Long id) {
         log.debug("REST request to get ItemCompra : {}", id);
         Conta contaTest = contaRepository.findByUserIsCurrentUser();
-        if(!UserAccountPermissionChecker.checkPermissao(contaTest, canCRDAll)){
-            throw new UserNotAuthorizedException("Usuário não autorizado!", ENTITY_NAME, "missing_permission");
-        }
         Optional<ItemCompra> itemCompra = itemCompraRepository.findById(id);
         if(itemCompra.isPresent()){
             if(itemCompra.get().getCompra().getConta().equals(contaTest) || 

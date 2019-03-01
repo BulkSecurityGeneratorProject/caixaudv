@@ -118,8 +118,16 @@ public class RessarcimentoResource {
     @GetMapping("/ressarcimentos/{id}")
     public ResponseEntity<Ressarcimento> getRessarcimento(@PathVariable Long id) {
         log.debug("REST request to get Ressarcimento : {}", id);
+        Conta contaTest = contaRepository.findByUserIsCurrentUser();
         Optional<Ressarcimento> ressarcimento = ressarcimentoRepository.findById(id);
-        return ResponseUtil.wrapOrNotFound(ressarcimento);
+        if(ressarcimento.isPresent()){
+            if(ressarcimento.get().getConta().equals(contaTest) || 
+                    contaTest.getNivelPermissao().equals(NivelPermissao.ADMIN) ||
+                    contaTest.getNivelPermissao().equals(NivelPermissao.OPERADOR))
+                return ResponseEntity.ok(ressarcimento.get());
+            else throw new UserNotAuthorizedException("Usuário não autorizado!", ENTITY_NAME, "missing_permission");
+        }
+        else return ResponseEntity.notFound().build();
     }
 
     /**
@@ -131,6 +139,10 @@ public class RessarcimentoResource {
     @DeleteMapping("/ressarcimentos/{id}")
     public ResponseEntity<Void> deleteRessarcimento(@PathVariable Long id) {
         log.debug("REST request to delete Ressarcimento : {}", id);
+        Conta contaTest = contaRepository.findByUserIsCurrentUser();
+        if(!contaTest.getNivelPermissao().equals(NivelPermissao.ADMIN)) {
+            throw new UserNotAuthorizedException("Usuário não autorizado!", ENTITY_NAME, "missing_permission");
+        }
         ressarcimentoRepository.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
