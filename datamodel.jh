@@ -1,0 +1,43 @@
+entity Produto {
+    nome String required,
+    preco Float required min(0),
+    descricao String maxlength(191)
+}
+
+entity ItemCompra {
+    quant Integer required min(1)
+}
+
+entity Compra {
+    valorTotal Float required min(0),
+    nomeSolic String required
+}
+
+entity SessaoCaixa {
+    valorAtual Float required min(0),
+    data LocalDate required
+}
+
+entity Conta {
+    saldoAtual Float required,
+    dataAbertura LocalDate required
+}
+
+entity Ressarcimento {
+    valor Float required min(0),
+    data LocalDate required
+}
+
+relationship ManyToOne {
+    Compra{sessaoCaixa} to SessaoCaixa{compras},
+    Ressarcimento{sessaoCaixa} to SessaoCaixa{ressarcimentos}
+    Ressarcimento{conta} to Conta{ressarcimentos},
+    Compra{conta} to Conta{compras},
+    ItemCompra{produto} to Produto{itensCompra},
+    ItemCompra{compra} to Compra{itensCompra},
+    SessaoCaixa{user(login)} to User{sessoesCaixa}
+}
+
+relationship OneToOne {
+    Conta{user(login)} to User{conta} 
+}

@@ -1,0 +1,38 @@
+{
+    "generator-jhipster": {
+        "promptValues": {
+            "packageName": "org.udv.nrc.cantinadorei",
+            "nativeLanguage": "pt-br"
+        },
+        "jhipsterVersion": "5.8.2",
+        "applicationType": "monolith",
+        "baseName": "cantinadorei",
+        "packageName": "org.udv.nrc.cantinadorei",
+        "packageFolder": "org/udv/nrc/cantinadorei",
+        "serverPort": "8080",
+        "authenticationType": "jwt",
+        "cacheProvider": "ehcache",
+        "enableHibernateCache": true,
+        "websocket": "spring-websocket",
+        "databaseType": "sql",
+        "devDatabaseType": "h2Disk",
+        "prodDatabaseType": "mysql",
+        "searchEngine": false,
+        "messageBroker": false,
+        "serviceDiscoveryType": false,
+        "buildTool": "maven",
+        "enableSwaggerCodegen": false,
+        "jwtSecretKey": "ZTA2NmYzMWE4YmIyZjRjMDg0MGQwOWM2NmIwZTc3YTVkZDY2ZmMyYjJlYmY2MDdmZDBmNjRkMDQzZWU2OTU5MWRjMzRiN2I2OTM3NTI1NjQyZjcwNGMwZDQzNjBmZDllZjVmNGEwMDFmZGE3M2RiODUxYTRmN2E2OTc1YWJiNTU=",
+        "clientFramework": "angularX",
+        "useSass": true,
+        "clientPackageManager": "npm",
+        "testFrameworks": ["gatling", "cucumber", "protractor"],
+        "jhiPrefix": "jhi",
+        "entitySuffix": "",
+        "dtoSuffix": "DTO",
+        "otherModules": [],
+        "enableTranslation": true,
+        "nativeLanguage": "pt-br",
+        "languages": ["pt-br", "en", "es"]
+    }
+}
