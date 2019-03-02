@@ -1,21 +1,27 @@
 package org.udv.nrc.caixaudv.web.rest;
 
 import org.udv.nrc.caixaudv.config.Constants;
+import org.udv.nrc.caixaudv.domain.Conta;
 import org.udv.nrc.caixaudv.domain.User;
+import org.udv.nrc.caixaudv.domain.enumeration.NivelPermissao;
+import org.udv.nrc.caixaudv.repository.ContaRepository;
 import org.udv.nrc.caixaudv.repository.UserRepository;
 import org.udv.nrc.caixaudv.security.AuthoritiesConstants;
+import org.udv.nrc.caixaudv.security.UserAccountPermissionChecker;
 import org.udv.nrc.caixaudv.service.MailService;
 import org.udv.nrc.caixaudv.service.UserService;
 import org.udv.nrc.caixaudv.service.dto.UserDTO;
 import org.udv.nrc.caixaudv.web.rest.errors.BadRequestAlertException;
 import org.udv.nrc.caixaudv.web.rest.errors.EmailAlreadyUsedException;
 import org.udv.nrc.caixaudv.web.rest.errors.LoginAlreadyUsedException;
+import org.udv.nrc.caixaudv.web.rest.errors.UserNotAuthorizedException;
 import org.udv.nrc.caixaudv.web.rest.util.HeaderUtil;
 import org.udv.nrc.caixaudv.web.rest.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -24,6 +30,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -64,6 +71,12 @@ public class UserResource {
     private final UserRepository userRepository;
 
     private final MailService mailService;
+
+    @Autowired
+    private ContaRepository contaRepository;
+
+    private final List<NivelPermissao> canCRAll = Arrays.asList(NivelPermissao.ADMIN, 
+        NivelPermissao.OPERADOR);
 
     public UserResource(UserService userService, UserRepository userRepository, MailService mailService) {
 
@@ -138,7 +151,11 @@ public class UserResource {
      * @return the ResponseEntity with status 200 (OK) and with body all users
      */
     @GetMapping("/users")
-    public ResponseEntity<List<UserDTO>> getAllUsers(Pageable pageable) {
+    public ResponseEntity<List<UserDTO>> getAllUsers(HttpServletRequest request, Pageable pageable) {
+        Conta currentConta = contaRepository.findByUserIsCurrentUser();
+        if(!UserAccountPermissionChecker.checkPermissao(currentConta, canCRAll)){
+            throw new UserNotAuthorizedException("Usuário não autorizado!", "user", "missing_permission");
+        }
         final Page<UserDTO> page = userService.getAllManagedUsers(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/users");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);

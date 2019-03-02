@@ -6,6 +6,7 @@ import org.udv.nrc.caixaudv.repository.ContaRepository;
 import org.udv.nrc.caixaudv.repository.ProdutoRepository;
 import org.udv.nrc.caixaudv.security.UserAccountPermissionChecker;
 import org.udv.nrc.caixaudv.web.rest.errors.BadRequestAlertException;
+import org.udv.nrc.caixaudv.web.rest.errors.UserNotAuthorizedException;
 import org.udv.nrc.caixaudv.web.rest.util.HeaderUtil;
 
 import io.github.jhipster.web.util.ResponseUtil;
@@ -104,7 +105,7 @@ public class ProdutoResource {
         log.debug("REST request to get all Produtos");
         Conta currentConta = contaRepository.findByUserIsCurrentUser();
         if(!UserAccountPermissionChecker.checkPermissao(currentConta, canRAll)){
-            throw new BadRequestAlertException("Usuário não autorizado!", ENTITY_NAME, "missing_permission");
+            throw new UserNotAuthorizedException("Usuário não autorizado!", ENTITY_NAME, "missing_permission");
         }
         return produtoRepository.findAll();
     }

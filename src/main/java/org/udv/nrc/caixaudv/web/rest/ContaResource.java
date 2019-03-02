@@ -1,4 +1,25 @@
 package org.udv.nrc.caixaudv.web.rest;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.udv.nrc.caixaudv.domain.Conta;
 import org.udv.nrc.caixaudv.domain.enumeration.NivelPermissao;
 import org.udv.nrc.caixaudv.repository.ContaRepository;
@@ -6,19 +27,6 @@ import org.udv.nrc.caixaudv.security.UserAccountPermissionChecker;
 import org.udv.nrc.caixaudv.web.rest.errors.BadRequestAlertException;
 import org.udv.nrc.caixaudv.web.rest.errors.UserNotAuthorizedException;
 import org.udv.nrc.caixaudv.web.rest.util.HeaderUtil;
-import io.github.jhipster.web.util.ResponseUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * REST controller for managing Conta.
@@ -32,6 +40,8 @@ public class ContaResource {
     private static final String ENTITY_NAME = "conta";
 
     private final ContaRepository contaRepository;
+
+    private final String ROLE_ADMIN = "ROLE_ADMIN";
 
     private final List<NivelPermissao> canCRAll = Arrays.asList(NivelPermissao.ADMIN, 
         NivelPermissao.OPERADOR);
@@ -48,7 +58,7 @@ public class ContaResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PostMapping("/contas")
-    public ResponseEntity<Conta> createConta(@Valid @RequestBody Conta newConta) throws URISyntaxException {
+    public ResponseEntity<Conta> createConta(@Valid @RequestBody Conta newConta, HttpServletRequest request) throws URISyntaxException {
         log.debug("REST request to save Conta : {}", newConta);
         if (newConta.getId() != null) {
             throw new BadRequestAlertException("A new conta cannot already have an ID", ENTITY_NAME, "idexists");
@@ -57,9 +67,10 @@ public class ContaResource {
         if(!UserAccountPermissionChecker.checkPermissao(currentConta, canCRAll)){
             throw new UserNotAuthorizedException("Usuário não autorizado!", ENTITY_NAME, "missing_permission");
         }
-        if(!newConta.getNivelPermissao().equals(NivelPermissao.CLIENTE) &&
-                !currentConta.getNivelPermissao().equals(NivelPermissao.ADMIN)){
-            throw new BadRequestAlertException("Apenas conta CLIENTE é permitido criar para usuário não-administrativo", 
+        if((!newConta.getNivelPermissao().equals(NivelPermissao.CLIENTE) &&  //(New account is not to CLIENT &&
+                !currentConta.getNivelPermissao().equals(NivelPermissao.ADMIN)) ||  //Usuário atual não é ADMIN) ||
+                request.isUserInRole(ROLE_ADMIN)) {  //Prevent to assign permission to admin-role users
+            throw new BadRequestAlertException("Apenas conta CLIENTE é permitido criar para usuários não-administrativos", 
                 ENTITY_NAME, "illegal_account_creating");
         }
         Conta result = contaRepository.save(newConta);
@@ -99,11 +110,13 @@ public class ContaResource {
      * @return the ResponseEntity with status 200 (OK) and the list of contas in body
      */
     @GetMapping("/contas")
-    @PreAuthorize("contaRepository.findByUserIsCurrentUser()" +
-        ".getNivelPermissao().equals(NivelPermissao.OPERADOR)")
     public List<Conta> getAllContas() {
         log.debug("REST request to get all Contas");
-        return contaRepository.findAll();
+        Conta currentConta = contaRepository.findByUserIsCurrentUser();
+        if(!UserAccountPermissionChecker.checkPermissao(currentConta, canCRAll)){
+            return Arrays.asList(currentConta);
+        }
+        else return contaRepository.findAll();
     }
 
     /**
