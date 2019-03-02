@@ -1,0 +1,25 @@
+{
+    "cantinadoreiApp": {
+        "sessaoCaixa": {
+            "home": {
+                "title": "Sessao Caixas",
+                "createLabel": "Crear nuevo Sessao Caixa",
+                "createOrEditLabel": "Crear o editar Sessao Caixa"
+            },
+            "created": "Un nuevo Sessao Caixa ha sido creado con el identificador {{ param }}",
+            "updated": "Un Sessao Caixa ha sido actualizado con el identificador {{ param }}",
+            "deleted": "Un Sessao Caixa ha sido eliminado con el identificador {{ param }}",
+            "delete": {
+                "question": "¿Seguro que quiere eliminar Sessao Caixa {{ id }}?"
+            },
+            "detail": {
+                "title": "Sessao Caixa"
+            },
+            "valorAtual": "Valor Atual",
+            "data": "Data",
+            "user": "User",
+            "compras": "Compras",
+            "ressarcimentos": "Ressarcimentos"
+        }
+    }
+}

@@ -38,6 +38,18 @@ public class CacheConfiguration {
             cm.createCache(org.udv.nrc.cantinadorei.domain.User.class.getName(), jcacheConfiguration);
             cm.createCache(org.udv.nrc.cantinadorei.domain.Authority.class.getName(), jcacheConfiguration);
             cm.createCache(org.udv.nrc.cantinadorei.domain.User.class.getName() + ".authorities", jcacheConfiguration);
+            cm.createCache(org.udv.nrc.cantinadorei.domain.Produto.class.getName(), jcacheConfiguration);
+            cm.createCache(org.udv.nrc.cantinadorei.domain.Produto.class.getName() + ".itensCompras", jcacheConfiguration);
+            cm.createCache(org.udv.nrc.cantinadorei.domain.ItemCompra.class.getName(), jcacheConfiguration);
+            cm.createCache(org.udv.nrc.cantinadorei.domain.Compra.class.getName(), jcacheConfiguration);
+            cm.createCache(org.udv.nrc.cantinadorei.domain.Compra.class.getName() + ".itensCompras", jcacheConfiguration);
+            cm.createCache(org.udv.nrc.cantinadorei.domain.SessaoCaixa.class.getName(), jcacheConfiguration);
+            cm.createCache(org.udv.nrc.cantinadorei.domain.SessaoCaixa.class.getName() + ".compras", jcacheConfiguration);
+            cm.createCache(org.udv.nrc.cantinadorei.domain.SessaoCaixa.class.getName() + ".ressarcimentos", jcacheConfiguration);
+            cm.createCache(org.udv.nrc.cantinadorei.domain.Conta.class.getName(), jcacheConfiguration);
+            cm.createCache(org.udv.nrc.cantinadorei.domain.Conta.class.getName() + ".ressarcimentos", jcacheConfiguration);
+            cm.createCache(org.udv.nrc.cantinadorei.domain.Conta.class.getName() + ".compras", jcacheConfiguration);
+            cm.createCache(org.udv.nrc.cantinadorei.domain.Ressarcimento.class.getName(), jcacheConfiguration);
             // jhipster-needle-ehcache-add-entry
         };
     }

@@ -1,0 +1,50 @@
+{
+    "name": "Conta",
+    "fields": [
+        {
+            "fieldName": "saldoAtual",
+            "fieldType": "Float",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "dataAbertura",
+            "fieldType": "LocalDate",
+            "fieldValidateRules": [
+                "required"
+            ]
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "one-to-one",
+            "otherEntityName": "user",
+            "otherEntityRelationshipName": "conta",
+            "relationshipName": "user",
+            "otherEntityField": "login",
+            "ownerSide": true
+        },
+        {
+            "relationshipType": "one-to-many",
+            "otherEntityName": "ressarcimento",
+            "otherEntityRelationshipName": "conta",
+            "relationshipName": "ressarcimentos"
+        },
+        {
+            "relationshipType": "one-to-many",
+            "otherEntityName": "compra",
+            "otherEntityRelationshipName": "conta",
+            "relationshipName": "compras"
+        }
+    ],
+    "changelogDate": "20190302154120",
+    "entityTableName": "conta",
+    "dto": "no",
+    "pagination": "no",
+    "service": "no",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*"
+}

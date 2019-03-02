@@ -1,0 +1,43 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="ressarcimento">
+            <h2><span jhiTranslate="cantinadoreiApp.ressarcimento.detail.title">Ressarcimento</span> {{ressarcimento.id}}</h2>
+            <hr>
+            <jhi-alert-error></jhi-alert-error>
+            <dl class="row-md jh-entity-details">
+                <dt><span jhiTranslate="cantinadoreiApp.ressarcimento.valor">Valor</span></dt>
+                <dd>
+                    <span>{{ressarcimento.valor}}</span>
+                </dd>
+                <dt><span jhiTranslate="cantinadoreiApp.ressarcimento.data">Data</span></dt>
+                <dd>
+                    <span>{{ressarcimento.data}}</span>
+                </dd>
+                <dt><span jhiTranslate="cantinadoreiApp.ressarcimento.sessaoCaixa">Sessao Caixa</span></dt>
+                <dd>
+                    <div *ngIf="ressarcimento.sessaoCaixa">
+                        <a [routerLink]="['/sessao-caixa', ressarcimento.sessaoCaixa?.id, 'view']">{{ressarcimento.sessaoCaixa?.id}}</a>
+                    </div>
+                </dd>
+                <dt><span jhiTranslate="cantinadoreiApp.ressarcimento.conta">Conta</span></dt>
+                <dd>
+                    <div *ngIf="ressarcimento.conta">
+                        <a [routerLink]="['/conta', ressarcimento.conta?.id, 'view']">{{ressarcimento.conta?.id}}</a>
+                    </div>
+                </dd>
+            </dl>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+            </button>
+
+            <button type="button"
+                    [routerLink]="['/ressarcimento', ressarcimento.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+            </button>
+        </div>
+    </div>
+</div>

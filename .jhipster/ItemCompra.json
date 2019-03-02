@@ -1,0 +1,39 @@
+{
+    "name": "ItemCompra",
+    "fields": [
+        {
+            "fieldName": "quant",
+            "fieldType": "Integer",
+            "fieldValidateRules": [
+                "required",
+                "min"
+            ],
+            "fieldValidateRulesMin": 1
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "many-to-one",
+            "otherEntityName": "produto",
+            "otherEntityRelationshipName": "itensCompra",
+            "relationshipName": "produto",
+            "otherEntityField": "id"
+        },
+        {
+            "relationshipType": "many-to-one",
+            "otherEntityName": "compra",
+            "otherEntityRelationshipName": "itensCompra",
+            "relationshipName": "compra",
+            "otherEntityField": "id"
+        }
+    ],
+    "changelogDate": "20190302154117",
+    "entityTableName": "item_compra",
+    "dto": "no",
+    "pagination": "no",
+    "service": "no",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*"
+}

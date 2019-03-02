@@ -1,0 +1,51 @@
+{
+    "name": "SessaoCaixa",
+    "fields": [
+        {
+            "fieldName": "valorAtual",
+            "fieldType": "Float",
+            "fieldValidateRules": [
+                "required",
+                "min"
+            ],
+            "fieldValidateRulesMin": 0
+        },
+        {
+            "fieldName": "data",
+            "fieldType": "LocalDate",
+            "fieldValidateRules": [
+                "required"
+            ]
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "many-to-one",
+            "otherEntityName": "user",
+            "otherEntityRelationshipName": "sessoesCaixa",
+            "relationshipName": "user",
+            "otherEntityField": "login"
+        },
+        {
+            "relationshipType": "one-to-many",
+            "otherEntityName": "compra",
+            "otherEntityRelationshipName": "sessaoCaixa",
+            "relationshipName": "compras"
+        },
+        {
+            "relationshipType": "one-to-many",
+            "otherEntityName": "ressarcimento",
+            "otherEntityRelationshipName": "sessaoCaixa",
+            "relationshipName": "ressarcimentos"
+        }
+    ],
+    "changelogDate": "20190302154119",
+    "entityTableName": "sessao_caixa",
+    "dto": "no",
+    "pagination": "no",
+    "service": "no",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*"
+}

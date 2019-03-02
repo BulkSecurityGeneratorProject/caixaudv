@@ -1,0 +1,46 @@
+{
+    "name": "Ressarcimento",
+    "fields": [
+        {
+            "fieldName": "valor",
+            "fieldType": "Float",
+            "fieldValidateRules": [
+                "required",
+                "min"
+            ],
+            "fieldValidateRulesMin": 0
+        },
+        {
+            "fieldName": "data",
+            "fieldType": "LocalDate",
+            "fieldValidateRules": [
+                "required"
+            ]
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "many-to-one",
+            "otherEntityName": "sessaoCaixa",
+            "otherEntityRelationshipName": "ressarcimentos",
+            "relationshipName": "sessaoCaixa",
+            "otherEntityField": "id"
+        },
+        {
+            "relationshipType": "many-to-one",
+            "otherEntityName": "conta",
+            "otherEntityRelationshipName": "ressarcimentos",
+            "relationshipName": "conta",
+            "otherEntityField": "id"
+        }
+    ],
+    "changelogDate": "20190302154121",
+    "entityTableName": "ressarcimento",
+    "dto": "no",
+    "pagination": "no",
+    "service": "no",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*"
+}

@@ -1,0 +1,23 @@
+{
+    "cantinadoreiApp": {
+        "itemCompra": {
+            "home": {
+                "title": "Item Compras",
+                "createLabel": "Crear nuevo Item Compra",
+                "createOrEditLabel": "Crear o editar Item Compra"
+            },
+            "created": "Un nuevo Item Compra ha sido creado con el identificador {{ param }}",
+            "updated": "Un Item Compra ha sido actualizado con el identificador {{ param }}",
+            "deleted": "Un Item Compra ha sido eliminado con el identificador {{ param }}",
+            "delete": {
+                "question": "¿Seguro que quiere eliminar Item Compra {{ id }}?"
+            },
+            "detail": {
+                "title": "Item Compra"
+            },
+            "quant": "Quant",
+            "produto": "Produto",
+            "compra": "Compra"
+        }
+    }
+}

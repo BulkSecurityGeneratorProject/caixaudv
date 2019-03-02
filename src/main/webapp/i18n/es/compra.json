@@ -1,0 +1,25 @@
+{
+    "cantinadoreiApp": {
+        "compra": {
+            "home": {
+                "title": "Compras",
+                "createLabel": "Crear nuevo Compra",
+                "createOrEditLabel": "Crear o editar Compra"
+            },
+            "created": "Un nuevo Compra ha sido creado con el identificador {{ param }}",
+            "updated": "Un Compra ha sido actualizado con el identificador {{ param }}",
+            "deleted": "Un Compra ha sido eliminado con el identificador {{ param }}",
+            "delete": {
+                "question": "¿Seguro que quiere eliminar Compra {{ id }}?"
+            },
+            "detail": {
+                "title": "Compra"
+            },
+            "valorTotal": "Valor Total",
+            "nomeSolic": "Nome Solic",
+            "sessaoCaixa": "Sessao Caixa",
+            "conta": "Conta",
+            "itensCompra": "Itens Compra"
+        }
+    }
+}
