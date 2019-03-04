@@ -28,7 +28,7 @@ public class MailService {
 
     private final Logger log = LoggerFactory.getLogger(MailService.class);
 
-    private static final String USER = "user";
+    private static final String CLIENT = "user";
 
     private static final String BASE_URL = "baseUrl";
 
@@ -77,7 +77,7 @@ public class MailService {
     public void sendEmailFromTemplate(User user, String templateName, String titleKey) {
         Locale locale = Locale.forLanguageTag(user.getLangKey());
         Context context = new Context(locale);
-        context.setVariable(USER, user);
+        context.setVariable(CLIENT, user);
         context.setVariable(BASE_URL, jHipsterProperties.getMail().getBaseUrl());
         String content = templateEngine.process(templateName, context);
         String subject = messageSource.getMessage(titleKey, null, locale);

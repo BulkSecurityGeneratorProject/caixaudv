@@ -59,13 +59,13 @@ describe('Service Tests', () => {
 
             describe('hasAuthority', () => {
                 it('should return false if user is not logged', async () => {
-                    const hasAuthority = await service.hasAuthority('ROLE_OPERATOR');
+                    const hasAuthority = await service.hasAuthority('ROLE_ADMIN');
                     expect(hasAuthority).toBeFalsy();
                 });
 
                 it('should return false if user is logged and has not authority', async () => {
                     service.authenticate({
-                        authorities: ['ROLE_OPERATOR']
+                        authorities: ['ROLE_ADMIN']
                     });
 
                     const hasAuthority = await service.hasAuthority('ROLE_DBA');
@@ -75,10 +75,10 @@ describe('Service Tests', () => {
 
                 it('should return true if user is logged and has authority', async () => {
                     service.authenticate({
-                        authorities: ['ROLE_OPERATOR']
+                        authorities: ['ROLE_ADMIN']
                     });
 
-                    const hasAuthority = await service.hasAuthority('ROLE_OPERATOR');
+                    const hasAuthority = await service.hasAuthority('ROLE_ADMIN');
 
                     expect(hasAuthority).toBeTruthy();
                 });
@@ -86,13 +86,13 @@ describe('Service Tests', () => {
 
             describe('hasAnyAuthority', () => {
                 it('should return false if user is not logged', async () => {
-                    const hasAuthority = await service.hasAnyAuthority(['ROLE_OPERATOR']);
+                    const hasAuthority = await service.hasAnyAuthority(['ROLE_ADMIN']);
                     expect(hasAuthority).toBeFalsy();
                 });
 
                 it('should return false if user is logged and has not authority', async () => {
                     service.authenticate({
-                        authorities: ['ROLE_OPERATOR']
+                        authorities: ['ROLE_ADMIN']
                     });
 
                     const hasAuthority = await service.hasAnyAuthority(['ROLE_DBA']);
@@ -102,10 +102,10 @@ describe('Service Tests', () => {
 
                 it('should return true if user is logged and has authority', async () => {
                     service.authenticate({
-                        authorities: ['ROLE_OPERATOR']
+                        authorities: ['ROLE_ADMIN']
                     });
 
-                    const hasAuthority = await service.hasAnyAuthority(['ROLE_OPERATOR', 'ROLE_DBA']);
+                    const hasAuthority = await service.hasAnyAuthority(['ROLE_ADMIN', 'ROLE_DBA']);
 
                     expect(hasAuthority).toBeTruthy();
                 });

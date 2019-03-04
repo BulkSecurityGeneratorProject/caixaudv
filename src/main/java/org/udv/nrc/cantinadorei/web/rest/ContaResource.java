@@ -1,20 +1,33 @@
 package org.udv.nrc.cantinadorei.web.rest;
-import org.udv.nrc.cantinadorei.domain.Conta;
-import org.udv.nrc.cantinadorei.repository.ContaRepository;
-import org.udv.nrc.cantinadorei.web.rest.errors.BadRequestAlertException;
-import org.udv.nrc.cantinadorei.web.rest.util.HeaderUtil;
-import io.github.jhipster.web.util.ResponseUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
-
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+
+import javax.validation.Valid;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.udv.nrc.cantinadorei.domain.Conta;
+import org.udv.nrc.cantinadorei.repository.ContaRepository;
+import org.udv.nrc.cantinadorei.security.AuthoritiesConstants;
+import org.udv.nrc.cantinadorei.security.SecurityUtils;
+import org.udv.nrc.cantinadorei.service.UserService;
+import org.udv.nrc.cantinadorei.web.rest.errors.BadRequestAlertException;
+import org.udv.nrc.cantinadorei.web.rest.util.HeaderUtil;
 
 /**
  * REST controller for managing Conta.
@@ -29,8 +42,15 @@ public class ContaResource {
 
     private final ContaRepository contaRepository;
 
+    private static List<String> canCRAll;
+
+    @Autowired
+    private UserService userService;
+
     public ContaResource(ContaRepository contaRepository) {
         this.contaRepository = contaRepository;
+        canCRAll = Arrays.asList(AuthoritiesConstants.ADMIN, AuthoritiesConstants.OPERATOR,
+            AuthoritiesConstants.DBA);
     }
 
     /**
@@ -41,6 +61,7 @@ public class ContaResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PostMapping("/contas")
+    @PreAuthorize("hasAnyRole('ROLE_DBA', 'ROLE_ADMIN', 'ROLE_OPERATOR')")
     public ResponseEntity<Conta> createConta(@Valid @RequestBody Conta conta) throws URISyntaxException {
         log.debug("REST request to save Conta : {}", conta);
         if (conta.getId() != null) {
@@ -62,6 +83,7 @@ public class ContaResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/contas")
+    @PreAuthorize("hasAnyRole('ROLE_DBA', 'ROLE_ADMIN')")
     public ResponseEntity<Conta> updateConta(@Valid @RequestBody Conta conta) throws URISyntaxException {
         log.debug("REST request to update Conta : {}", conta);
         if (conta.getId() == null) {
@@ -81,6 +103,10 @@ public class ContaResource {
     @GetMapping("/contas")
     public List<Conta> getAllContas() {
         log.debug("REST request to get all Contas");
+        String currentUserLogin = SecurityUtils.getCurrentUserLogin().get();
+        if(!userService.isUserInRole(currentUserLogin, canCRAll)){
+            return contaRepository.findByUserIsCurrentUser();
+        }
         return contaRepository.findAll();
     }
 
@@ -94,7 +120,14 @@ public class ContaResource {
     public ResponseEntity<Conta> getConta(@PathVariable Long id) {
         log.debug("REST request to get Conta : {}", id);
         Optional<Conta> conta = contaRepository.findById(id);
-        return ResponseUtil.wrapOrNotFound(conta);
+        if(conta.isPresent()) {
+            String currentUserLogin = SecurityUtils.getCurrentUserLogin().get();
+            if(conta.get().getUser().getLogin().equals(currentUserLogin) ||
+                    userService.isUserInRole(currentUserLogin, canCRAll)) {
+                return ResponseEntity.ok(conta.get());
+            }
+        }
+        return ResponseEntity.notFound().build();
     }
 
     /**
@@ -104,6 +137,7 @@ public class ContaResource {
      * @return the ResponseEntity with status 200 (OK)
      */
     @DeleteMapping("/contas/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_DBA', 'ROLE_ADMIN')")
     public ResponseEntity<Void> deleteConta(@PathVariable Long id) {
         log.debug("REST request to delete Conta : {}", id);
         contaRepository.deleteById(id);

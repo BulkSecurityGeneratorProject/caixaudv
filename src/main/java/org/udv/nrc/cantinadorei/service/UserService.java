@@ -255,6 +255,20 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
+    public Set<Authority> getUserAuthoritiesByLogin(String login) {
+        return userRepository.findOneWithAuthoritiesByLogin(login).get()
+            .getAuthorities();
+    }
+
+    @Transactional(readOnly = true)
+    public boolean isUserInRole(String login, List<String> roles) {
+        return userRepository.findOneWithAuthoritiesByLogin(login).get().getAuthorities()
+            .stream()
+            .map(authority -> authority.getName())
+            .anyMatch(roles::contains);
+    }
+
+    @Transactional(readOnly = true)
     public Optional<User> getUserWithAuthorities(Long id) {
         return userRepository.findOneWithAuthoritiesById(id);
     }

@@ -33,7 +33,7 @@ export const contaRoute: Routes = [
         path: '',
         component: ContaComponent,
         data: {
-            authorities: ['ROLE_OPERATOR'],
+            authorities: ['ROLE_DBA', 'ROLE_ADMIN', 'ROLE_OPERATOR', 'ROLE_CANTINIER', 'ROLE_CLIENT'],
             pageTitle: 'cantinadoreiApp.conta.home.title'
         },
         canActivate: [UserRouteAccessService]
@@ -45,7 +45,7 @@ export const contaRoute: Routes = [
             conta: ContaResolve
         },
         data: {
-            authorities: ['ROLE_OPERATOR'],
+            authorities: ['ROLE_DBA', 'ROLE_ADMIN', 'ROLE_OPERATOR', 'ROLE_CANTINIER', 'ROLE_CLIENT'],
             pageTitle: 'cantinadoreiApp.conta.home.title'
         },
         canActivate: [UserRouteAccessService]
@@ -57,7 +57,7 @@ export const contaRoute: Routes = [
             conta: ContaResolve
         },
         data: {
-            authorities: ['ROLE_OPERATOR'],
+            authorities: ['ROLE_DBA', 'ROLE_ADMIN', 'ROLE_OPERATOR', 'ROLE_CANTINIER', 'ROLE_CLIENT'],
             pageTitle: 'cantinadoreiApp.conta.home.title'
         },
         canActivate: [UserRouteAccessService]
@@ -69,7 +69,7 @@ export const contaRoute: Routes = [
             conta: ContaResolve
         },
         data: {
-            authorities: ['ROLE_OPERATOR'],
+            authorities: ['ROLE_DBA', 'ROLE_ADMIN', 'ROLE_OPERATOR', 'ROLE_CANTINIER', 'ROLE_CLIENT'],
             pageTitle: 'cantinadoreiApp.conta.home.title'
         },
         canActivate: [UserRouteAccessService]
@@ -84,7 +84,7 @@ export const contaPopupRoute: Routes = [
             conta: ContaResolve
         },
         data: {
-            authorities: ['ROLE_OPERATOR'],
+            authorities: ['ROLE_DBA', 'ROLE_ADMIN', 'ROLE_OPERATOR', 'ROLE_CANTINIER', 'ROLE_CLIENT'],
             pageTitle: 'cantinadoreiApp.conta.home.title'
         },
         canActivate: [UserRouteAccessService],

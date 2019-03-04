@@ -33,7 +33,7 @@ export const sessaoCaixaRoute: Routes = [
         path: '',
         component: SessaoCaixaComponent,
         data: {
-            authorities: ['ROLE_OPERATOR'],
+            authorities: ['ROLE_DBA', 'ROLE_ADMIN', 'ROLE_OPERATOR', 'ROLE_CANTINIER', 'ROLE_CLIENT'],
             pageTitle: 'cantinadoreiApp.sessaoCaixa.home.title'
         },
         canActivate: [UserRouteAccessService]
@@ -45,7 +45,7 @@ export const sessaoCaixaRoute: Routes = [
             sessaoCaixa: SessaoCaixaResolve
         },
         data: {
-            authorities: ['ROLE_OPERATOR'],
+            authorities: ['ROLE_DBA', 'ROLE_ADMIN', 'ROLE_OPERATOR', 'ROLE_CANTINIER', 'ROLE_CLIENT'],
             pageTitle: 'cantinadoreiApp.sessaoCaixa.home.title'
         },
         canActivate: [UserRouteAccessService]
@@ -57,7 +57,7 @@ export const sessaoCaixaRoute: Routes = [
             sessaoCaixa: SessaoCaixaResolve
         },
         data: {
-            authorities: ['ROLE_OPERATOR'],
+            authorities: ['ROLE_DBA', 'ROLE_ADMIN', 'ROLE_OPERATOR', 'ROLE_CANTINIER', 'ROLE_CLIENT'],
             pageTitle: 'cantinadoreiApp.sessaoCaixa.home.title'
         },
         canActivate: [UserRouteAccessService]
@@ -69,7 +69,7 @@ export const sessaoCaixaRoute: Routes = [
             sessaoCaixa: SessaoCaixaResolve
         },
         data: {
-            authorities: ['ROLE_OPERATOR'],
+            authorities: ['ROLE_DBA', 'ROLE_ADMIN', 'ROLE_OPERATOR', 'ROLE_CANTINIER', 'ROLE_CLIENT'],
             pageTitle: 'cantinadoreiApp.sessaoCaixa.home.title'
         },
         canActivate: [UserRouteAccessService]
@@ -84,7 +84,7 @@ export const sessaoCaixaPopupRoute: Routes = [
             sessaoCaixa: SessaoCaixaResolve
         },
         data: {
-            authorities: ['ROLE_OPERATOR'],
+            authorities: ['ROLE_DBA', 'ROLE_ADMIN', 'ROLE_OPERATOR', 'ROLE_CANTINIER', 'ROLE_CLIENT'],
             pageTitle: 'cantinadoreiApp.sessaoCaixa.home.title'
         },
         canActivate: [UserRouteAccessService],

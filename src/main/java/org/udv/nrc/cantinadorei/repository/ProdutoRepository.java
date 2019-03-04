@@ -1,6 +1,9 @@
 package org.udv.nrc.cantinadorei.repository;
 
 import org.udv.nrc.cantinadorei.domain.Produto;
+
+import java.util.List;
+
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 

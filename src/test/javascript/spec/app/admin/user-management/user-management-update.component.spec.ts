@@ -15,7 +15,7 @@ describe('Component Tests', () => {
         let mockLanguageHelper: any;
         const route = ({
             data: of({
-                user: new User(1, 'user', 'first', 'last', 'first@last.com', true, 'en', ['ROLE_OPERATOR'], 'admin', null, null, null)
+                user: new User(1, 'user', 'first', 'last', 'first@last.com', true, 'en', ['ROLE_ADMIN'], 'admin', null, null, null)
             })
         } as any) as ActivatedRoute;
 
@@ -46,14 +46,14 @@ describe('Component Tests', () => {
                 [],
                 fakeAsync(() => {
                     // GIVEN
-                    spyOn(service, 'authorities').and.returnValue(of(['USER']));
+                    spyOn(service, 'authorities').and.returnValue(of(['CLIENT']));
 
                     // WHEN
                     comp.ngOnInit();
 
                     // THEN
                     expect(service.authorities).toHaveBeenCalled();
-                    expect(comp.authorities).toEqual(['USER']);
+                    expect(comp.authorities).toEqual(['CLIENT']);
                     expect(mockLanguageHelper.getAllSpy).toHaveBeenCalled();
                 })
             ));

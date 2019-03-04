@@ -1,20 +1,30 @@
 package org.udv.nrc.cantinadorei.web.rest;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Optional;
+
+import javax.validation.Valid;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.udv.nrc.cantinadorei.domain.Produto;
 import org.udv.nrc.cantinadorei.repository.ProdutoRepository;
 import org.udv.nrc.cantinadorei.web.rest.errors.BadRequestAlertException;
 import org.udv.nrc.cantinadorei.web.rest.util.HeaderUtil;
+
 import io.github.jhipster.web.util.ResponseUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import java.net.URI;
-import java.net.URISyntaxException;
-
-import java.util.List;
-import java.util.Optional;
 
 /**
  * REST controller for managing Produto.
@@ -41,6 +51,7 @@ public class ProdutoResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PostMapping("/produtos")
+    @PreAuthorize("hasAnyRole('ROLE_DBA', 'ROLE_ADMIN')")
     public ResponseEntity<Produto> createProduto(@Valid @RequestBody Produto produto) throws URISyntaxException {
         log.debug("REST request to save Produto : {}", produto);
         if (produto.getId() != null) {
@@ -62,6 +73,7 @@ public class ProdutoResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/produtos")
+    @PreAuthorize("hasAnyRole('ROLE_DBA', 'ROLE_ADMIN')")
     public ResponseEntity<Produto> updateProduto(@Valid @RequestBody Produto produto) throws URISyntaxException {
         log.debug("REST request to update Produto : {}", produto);
         if (produto.getId() == null) {
@@ -91,6 +103,7 @@ public class ProdutoResource {
      * @return the ResponseEntity with status 200 (OK) and with body the produto, or with status 404 (Not Found)
      */
     @GetMapping("/produtos/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_DBA', 'ROLE_ADMIN', 'ROLE_OPERATOR')")
     public ResponseEntity<Produto> getProduto(@PathVariable Long id) {
         log.debug("REST request to get Produto : {}", id);
         Optional<Produto> produto = produtoRepository.findById(id);
@@ -104,6 +117,7 @@ public class ProdutoResource {
      * @return the ResponseEntity with status 200 (OK)
      */
     @DeleteMapping("/produtos/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_DBA', 'ROLE_ADMIN')")
     public ResponseEntity<Void> deleteProduto(@PathVariable Long id) {
         log.debug("REST request to delete Produto : {}", id);
         produtoRepository.deleteById(id);

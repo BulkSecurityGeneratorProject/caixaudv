@@ -9,7 +9,7 @@ import { AccountService } from 'app/core/auth/account.service';
  * ```
  *     <some-element *jhiHasAnyAuthority="'ROLE_DBA'">...</some-element>
  *
- *     <some-element *jhiHasAnyAuthority="['ROLE_DBA', 'ROLE_OPERATOR']">...</some-element>
+ *     <some-element *jhiHasAnyAuthority="['ROLE_DBA', 'ROLE_ADMIN']">...</some-element>
  * ```
  */
 @Directive({

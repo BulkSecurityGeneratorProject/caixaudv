@@ -12,7 +12,7 @@ describe('Component Tests', () => {
         let fixture: ComponentFixture<UserMgmtDetailComponent>;
         const route = ({
             data: of({
-                user: new User(1, 'user', 'first', 'last', 'first@last.com', true, 'en', ['ROLE_OPERATOR'], 'admin', null, null, null)
+                user: new User(1, 'user', 'first', 'last', 'first@last.com', true, 'en', ['ROLE_ADMIN'], 'admin', null, null, null)
             })
         } as any) as ActivatedRoute;
 
@@ -53,7 +53,7 @@ describe('Component Tests', () => {
                         email: 'first@last.com',
                         activated: true,
                         langKey: 'en',
-                        authorities: ['ROLE_OPERATOR'],
+                        authorities: ['ROLE_ADMIN'],
                         createdBy: 'admin',
                         createdDate: null,
                         lastModifiedBy: null,

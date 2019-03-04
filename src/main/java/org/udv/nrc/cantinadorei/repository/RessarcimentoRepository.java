@@ -1,6 +1,9 @@
 package org.udv.nrc.cantinadorei.repository;
 
 import org.udv.nrc.cantinadorei.domain.Ressarcimento;
+
+import java.util.List;
+
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 
@@ -11,5 +14,6 @@ import org.springframework.stereotype.Repository;
 @SuppressWarnings("unused")
 @Repository
 public interface RessarcimentoRepository extends JpaRepository<Ressarcimento, Long> {
-
+    @Query("select res from Ressarcimento res where res.conta.user.login = ?#{principal.username}")
+    List<Ressarcimento> findByUserIsCurrentUser();
 }

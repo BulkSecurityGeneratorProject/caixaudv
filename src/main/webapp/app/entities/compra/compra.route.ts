@@ -33,7 +33,7 @@ export const compraRoute: Routes = [
         path: '',
         component: CompraComponent,
         data: {
-            authorities: ['ROLE_OPERATOR'],
+            authorities: ['ROLE_DBA', 'ROLE_ADMIN', 'ROLE_OPERATOR', 'ROLE_CANTINIER', 'ROLE_CLIENT'],
             pageTitle: 'cantinadoreiApp.compra.home.title'
         },
         canActivate: [UserRouteAccessService]
@@ -45,7 +45,7 @@ export const compraRoute: Routes = [
             compra: CompraResolve
         },
         data: {
-            authorities: ['ROLE_OPERATOR'],
+            authorities: ['ROLE_DBA', 'ROLE_ADMIN', 'ROLE_OPERATOR', 'ROLE_CANTINIER', 'ROLE_CLIENT'],
             pageTitle: 'cantinadoreiApp.compra.home.title'
         },
         canActivate: [UserRouteAccessService]
@@ -57,7 +57,7 @@ export const compraRoute: Routes = [
             compra: CompraResolve
         },
         data: {
-            authorities: ['ROLE_OPERATOR'],
+            authorities: ['ROLE_DBA', 'ROLE_ADMIN', 'ROLE_OPERATOR', 'ROLE_CANTINIER', 'ROLE_CLIENT'],
             pageTitle: 'cantinadoreiApp.compra.home.title'
         },
         canActivate: [UserRouteAccessService]
@@ -69,7 +69,7 @@ export const compraRoute: Routes = [
             compra: CompraResolve
         },
         data: {
-            authorities: ['ROLE_OPERATOR'],
+            authorities: ['ROLE_DBA', 'ROLE_ADMIN', 'ROLE_OPERATOR', 'ROLE_CANTINIER', 'ROLE_CLIENT'],
             pageTitle: 'cantinadoreiApp.compra.home.title'
         },
         canActivate: [UserRouteAccessService]
@@ -84,7 +84,7 @@ export const compraPopupRoute: Routes = [
             compra: CompraResolve
         },
         data: {
-            authorities: ['ROLE_OPERATOR'],
+            authorities: ['ROLE_DBA', 'ROLE_ADMIN', 'ROLE_OPERATOR', 'ROLE_CANTINIER', 'ROLE_CLIENT'],
             pageTitle: 'cantinadoreiApp.compra.home.title'
         },
         canActivate: [UserRouteAccessService],

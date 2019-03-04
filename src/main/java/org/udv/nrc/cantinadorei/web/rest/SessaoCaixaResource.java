@@ -7,6 +7,7 @@ import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -41,6 +42,7 @@ public class SessaoCaixaResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PostMapping("/sessao-caixas")
+    @PreAuthorize("hasAnyRole('ROLE_DBA', 'ROLE_ADMIN', 'ROLE_OPERATOR')")
     public ResponseEntity<SessaoCaixa> createSessaoCaixa(@Valid @RequestBody SessaoCaixa sessaoCaixa) throws URISyntaxException {
         log.debug("REST request to save SessaoCaixa : {}", sessaoCaixa);
         if (sessaoCaixa.getId() != null) {
@@ -62,6 +64,7 @@ public class SessaoCaixaResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/sessao-caixas")
+    @PreAuthorize("hasAnyRole('ROLE_DBA', 'ROLE_ADMIN')")
     public ResponseEntity<SessaoCaixa> updateSessaoCaixa(@Valid @RequestBody SessaoCaixa sessaoCaixa) throws URISyntaxException {
         log.debug("REST request to update SessaoCaixa : {}", sessaoCaixa);
         if (sessaoCaixa.getId() == null) {
@@ -104,6 +107,7 @@ public class SessaoCaixaResource {
      * @return the ResponseEntity with status 200 (OK)
      */
     @DeleteMapping("/sessao-caixas/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_DBA', 'ROLE_ADMIN')")
     public ResponseEntity<Void> deleteSessaoCaixa(@PathVariable Long id) {
         log.debug("REST request to delete SessaoCaixa : {}", id);
         sessaoCaixaRepository.deleteById(id);

@@ -1,6 +1,9 @@
 package org.udv.nrc.cantinadorei.repository;
 
 import org.udv.nrc.cantinadorei.domain.ItemCompra;
+
+import java.util.List;
+
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 
@@ -11,5 +14,6 @@ import org.springframework.stereotype.Repository;
 @SuppressWarnings("unused")
 @Repository
 public interface ItemCompraRepository extends JpaRepository<ItemCompra, Long> {
-
+    @Query("select item_compra from ItemCompra item_compra where item_compra.compra.conta.user.login = ?#{principal.username}")
+    List<ItemCompra> findByUserIsCurrentUser();
 }

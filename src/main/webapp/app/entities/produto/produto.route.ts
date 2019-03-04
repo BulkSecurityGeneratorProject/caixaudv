@@ -33,7 +33,7 @@ export const produtoRoute: Routes = [
         path: '',
         component: ProdutoComponent,
         data: {
-            authorities: ['ROLE_OPERATOR'],
+            authorities: ['ROLE_DBA', 'ROLE_ADMIN', 'ROLE_OPERATOR', 'ROLE_CANTINIER', 'ROLE_CLIENT'],
             pageTitle: 'cantinadoreiApp.produto.home.title'
         },
         canActivate: [UserRouteAccessService]
@@ -45,7 +45,7 @@ export const produtoRoute: Routes = [
             produto: ProdutoResolve
         },
         data: {
-            authorities: ['ROLE_OPERATOR'],
+            authorities: ['ROLE_DBA', 'ROLE_ADMIN', 'ROLE_OPERATOR', 'ROLE_CANTINIER', 'ROLE_CLIENT'],
             pageTitle: 'cantinadoreiApp.produto.home.title'
         },
         canActivate: [UserRouteAccessService]
@@ -57,7 +57,7 @@ export const produtoRoute: Routes = [
             produto: ProdutoResolve
         },
         data: {
-            authorities: ['ROLE_OPERATOR'],
+            authorities: ['ROLE_DBA', 'ROLE_ADMIN', 'ROLE_OPERATOR', 'ROLE_CANTINIER', 'ROLE_CLIENT'],
             pageTitle: 'cantinadoreiApp.produto.home.title'
         },
         canActivate: [UserRouteAccessService]
@@ -69,7 +69,7 @@ export const produtoRoute: Routes = [
             produto: ProdutoResolve
         },
         data: {
-            authorities: ['ROLE_OPERATOR'],
+            authorities: ['ROLE_DBA', 'ROLE_ADMIN', 'ROLE_OPERATOR', 'ROLE_CANTINIER', 'ROLE_CLIENT'],
             pageTitle: 'cantinadoreiApp.produto.home.title'
         },
         canActivate: [UserRouteAccessService]
@@ -84,7 +84,7 @@ export const produtoPopupRoute: Routes = [
             produto: ProdutoResolve
         },
         data: {
-            authorities: ['ROLE_OPERATOR'],
+            authorities: ['ROLE_DBA', 'ROLE_ADMIN', 'ROLE_OPERATOR', 'ROLE_CANTINIER', 'ROLE_CLIENT'],
             pageTitle: 'cantinadoreiApp.produto.home.title'
         },
         canActivate: [UserRouteAccessService],

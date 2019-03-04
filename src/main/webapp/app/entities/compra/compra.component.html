@@ -34,7 +34,7 @@
                 </td>
                 <td>
                     <div *ngIf="compra.conta">
-                        <a [routerLink]="['../conta', compra.conta?.id, 'view' ]" >{{compra.conta?.id}}</a>
+                        <a [routerLink]="['../conta', compra.conta?.id, 'view' ]" >{{compra.conta?.user?.login}}</a>
                     </div>
                 </td>
                 <td class="text-right">

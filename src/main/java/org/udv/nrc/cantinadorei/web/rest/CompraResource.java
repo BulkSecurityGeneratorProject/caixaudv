@@ -1,20 +1,34 @@
 package org.udv.nrc.cantinadorei.web.rest;
-import org.udv.nrc.cantinadorei.domain.Compra;
-import org.udv.nrc.cantinadorei.repository.CompraRepository;
-import org.udv.nrc.cantinadorei.web.rest.errors.BadRequestAlertException;
-import org.udv.nrc.cantinadorei.web.rest.util.HeaderUtil;
-import io.github.jhipster.web.util.ResponseUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
-
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+
+import javax.validation.Valid;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.udv.nrc.cantinadorei.domain.Compra;
+import org.udv.nrc.cantinadorei.repository.CompraRepository;
+import org.udv.nrc.cantinadorei.security.AuthoritiesConstants;
+import org.udv.nrc.cantinadorei.security.SecurityUtils;
+import org.udv.nrc.cantinadorei.service.UserService;
+import org.udv.nrc.cantinadorei.web.rest.errors.BadRequestAlertException;
+import org.udv.nrc.cantinadorei.web.rest.errors.UserNotAuthorizedException;
+import org.udv.nrc.cantinadorei.web.rest.util.HeaderUtil;
 
 /**
  * REST controller for managing Compra.
@@ -28,9 +42,16 @@ public class CompraResource {
     private static final String ENTITY_NAME = "compra";
 
     private final CompraRepository compraRepository;
+    
+    private static List<String> canCRDAll;
+
+    @Autowired
+    private UserService userService;
 
     public CompraResource(CompraRepository compraRepository) {
         this.compraRepository = compraRepository;
+        canCRDAll = Arrays.asList(AuthoritiesConstants.ADMIN, AuthoritiesConstants.OPERATOR,
+            AuthoritiesConstants.DBA);
     }
 
     /**
@@ -41,6 +62,7 @@ public class CompraResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PostMapping("/compras")
+    @PreAuthorize("hasAnyRole('ROLE_DBA', 'ROLE_ADMIN', 'ROLE_OPERATOR')")
     public ResponseEntity<Compra> createCompra(@Valid @RequestBody Compra compra) throws URISyntaxException {
         log.debug("REST request to save Compra : {}", compra);
         if (compra.getId() != null) {
@@ -62,6 +84,7 @@ public class CompraResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/compras")
+    @PreAuthorize("hasAnyRole('ROLE_DBA', 'ROLE_ADMIN', 'ROLE_OPERATOR')")
     public ResponseEntity<Compra> updateCompra(@Valid @RequestBody Compra compra) throws URISyntaxException {
         log.debug("REST request to update Compra : {}", compra);
         if (compra.getId() == null) {
@@ -81,6 +104,10 @@ public class CompraResource {
     @GetMapping("/compras")
     public List<Compra> getAllCompras() {
         log.debug("REST request to get all Compras");
+        String currentUserLogin = SecurityUtils.getCurrentUserLogin().get();
+        if(!userService.isUserInRole(currentUserLogin, canCRDAll)){
+            return compraRepository.findByUserIsCurrentUser();
+        }
         return compraRepository.findAll();
     }
 
@@ -94,7 +121,15 @@ public class CompraResource {
     public ResponseEntity<Compra> getCompra(@PathVariable Long id) {
         log.debug("REST request to get Compra : {}", id);
         Optional<Compra> compra = compraRepository.findById(id);
-        return ResponseUtil.wrapOrNotFound(compra);
+        if(compra.isPresent()) {
+            String currentUserLogin = SecurityUtils.getCurrentUserLogin().get();
+            if(compra.get().getConta().getUser()
+                    .getLogin().equals(currentUserLogin) ||
+                    userService.isUserInRole(currentUserLogin, canCRDAll)) {
+                return ResponseEntity.ok(compra.get());
+            }
+        }
+        return ResponseEntity.notFound().build();
     }
 
     /**
@@ -104,8 +139,9 @@ public class CompraResource {
      * @return the ResponseEntity with status 200 (OK)
      */
     @DeleteMapping("/compras/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_DBA', 'ROLE_ADMIN', 'ROLE_OPERATOR')")
     public ResponseEntity<Void> deleteCompra(@PathVariable Long id) {
-        log.debug("REST request to delete Compra : {}", id);
+        log.debug("REST request to delete Compra : {}", id);        
         compraRepository.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
