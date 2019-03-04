@@ -68,7 +68,7 @@ describe('Service Tests', () => {
                         authorities: ['ROLE_OPERATOR']
                     });
 
-                    const hasAuthority = await service.hasAuthority('ROLE_ADMIN');
+                    const hasAuthority = await service.hasAuthority('ROLE_DBA');
 
                     expect(hasAuthority).toBeFalsy();
                 });
@@ -95,7 +95,7 @@ describe('Service Tests', () => {
                         authorities: ['ROLE_OPERATOR']
                     });
 
-                    const hasAuthority = await service.hasAnyAuthority(['ROLE_ADMIN']);
+                    const hasAuthority = await service.hasAnyAuthority(['ROLE_DBA']);
 
                     expect(hasAuthority).toBeFalsy();
                 });
@@ -105,7 +105,7 @@ describe('Service Tests', () => {
                         authorities: ['ROLE_OPERATOR']
                     });
 
-                    const hasAuthority = await service.hasAnyAuthority(['ROLE_OPERATOR', 'ROLE_ADMIN']);
+                    const hasAuthority = await service.hasAnyAuthority(['ROLE_OPERATOR', 'ROLE_DBA']);
 
                     expect(hasAuthority).toBeTruthy();
                 });

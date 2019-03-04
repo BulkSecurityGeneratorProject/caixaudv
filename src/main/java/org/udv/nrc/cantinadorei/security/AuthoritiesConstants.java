@@ -5,6 +5,8 @@ package org.udv.nrc.cantinadorei.security;
  */
 public final class AuthoritiesConstants {
 
+    public static final String DBA = "ROLE_DBA";
+
     public static final String ADMIN = "ROLE_ADMIN";
 
     public static final String OPERATOR = "ROLE_OPERATOR";
