@@ -91,6 +91,7 @@ public class ProdutoResource {
      * @return the ResponseEntity with status 200 (OK) and the list of produtos in body
      */
     @GetMapping("/produtos")
+    @PreAuthorize("hasAnyRole('ROLE_DBA', 'ROLE_ADMIN', 'ROLE_OPERATOR', 'ROLE_CANTINIER')")
     public List<Produto> getAllProdutos() {
         log.debug("REST request to get all Produtos");
         return produtoRepository.findAll();

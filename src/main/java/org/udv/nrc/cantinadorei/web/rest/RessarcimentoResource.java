@@ -10,7 +10,6 @@ import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,7 +24,6 @@ import org.udv.nrc.cantinadorei.domain.Ressarcimento;
 import org.udv.nrc.cantinadorei.repository.RessarcimentoRepository;
 import org.udv.nrc.cantinadorei.security.AuthoritiesConstants;
 import org.udv.nrc.cantinadorei.security.SecurityUtils;
-import org.udv.nrc.cantinadorei.service.UserService;
 import org.udv.nrc.cantinadorei.web.rest.errors.BadRequestAlertException;
 import org.udv.nrc.cantinadorei.web.rest.util.HeaderUtil;
 
@@ -43,9 +41,6 @@ public class RessarcimentoResource {
     private final RessarcimentoRepository ressarcimentoRepository;
 
     private static List<String> canCRAll;
-
-    @Autowired
-    private UserService userService;
 
     public RessarcimentoResource(RessarcimentoRepository ressarcimentoRepository) {
         this.ressarcimentoRepository = ressarcimentoRepository;
@@ -101,10 +96,10 @@ public class RessarcimentoResource {
      * @return the ResponseEntity with status 200 (OK) and the list of ressarcimentos in body
      */
     @GetMapping("/ressarcimentos")
+    @PreAuthorize("hasAnyRole('ROLE_DBA', 'ROLE_ADMIN', 'ROLE_OPERATOR', 'ROLE_CLIENT')")
     public List<Ressarcimento> getAllRessarcimentos() {
         log.debug("REST request to get all Ressarcimentos");
-        String currentUserLogin = SecurityUtils.getCurrentUserLogin().get();
-        if(!userService.isUserInRole(currentUserLogin, canCRAll)){
+        if(!SecurityUtils.currentUserMatchesRole(canCRAll)){
             return ressarcimentoRepository.findByUserIsCurrentUser();
         }
         return ressarcimentoRepository.findAll();
@@ -117,6 +112,7 @@ public class RessarcimentoResource {
      * @return the ResponseEntity with status 200 (OK) and with body the ressarcimento, or with status 404 (Not Found)
      */
     @GetMapping("/ressarcimentos/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_DBA', 'ROLE_ADMIN', 'ROLE_OPERATOR', 'ROLE_CLIENT')")
     public ResponseEntity<Ressarcimento> getRessarcimento(@PathVariable Long id) {
         log.debug("REST request to get Ressarcimento : {}", id);
         Optional<Ressarcimento> ressarcimento = ressarcimentoRepository.findById(id);
@@ -124,7 +120,7 @@ public class RessarcimentoResource {
             String currentUserLogin = SecurityUtils.getCurrentUserLogin().get();
             if(ressarcimento.get().getConta().getUser()
                     .getLogin().equals(currentUserLogin) ||
-                    userService.isUserInRole(currentUserLogin, canCRAll)) {
+                    SecurityUtils.currentUserMatchesRole(canCRAll)) {
                 return ResponseEntity.ok(ressarcimento.get());
             }
         }
@@ -138,7 +134,7 @@ public class RessarcimentoResource {
      * @return the ResponseEntity with status 200 (OK)
      */
     @DeleteMapping("/ressarcimentos/{id}")
-    @PreAuthorize("hasAnyRole('ROLE_DBA', 'ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_DBA', 'ROLE_ADMIN', 'ROLE_OPERATOR')")
     public ResponseEntity<Void> deleteRessarcimento(@PathVariable Long id) {
         log.debug("REST request to delete Ressarcimento : {}", id);
         ressarcimentoRepository.deleteById(id);

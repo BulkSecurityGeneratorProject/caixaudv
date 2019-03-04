@@ -1,5 +1,6 @@
 package org.udv.nrc.cantinadorei.security;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.security.core.context.SecurityContext;
@@ -71,6 +72,15 @@ public final class SecurityUtils {
         return Optional.ofNullable(securityContext.getAuthentication())
             .map(authentication -> authentication.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(authority)))
+            .orElse(false);
+    }
+
+    public static boolean currentUserMatchesRole(List<String> authorities) {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        return Optional.ofNullable(securityContext.getAuthentication())
+            .map(authentication -> authentication.getAuthorities().stream()
+                .map(grantedAuthority -> grantedAuthority.getAuthority())
+                .anyMatch(authorities::contains))
             .orElse(false);
     }
 }

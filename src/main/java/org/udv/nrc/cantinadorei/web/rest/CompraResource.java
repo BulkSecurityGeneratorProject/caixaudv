@@ -10,7 +10,6 @@ import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,9 +24,7 @@ import org.udv.nrc.cantinadorei.domain.Compra;
 import org.udv.nrc.cantinadorei.repository.CompraRepository;
 import org.udv.nrc.cantinadorei.security.AuthoritiesConstants;
 import org.udv.nrc.cantinadorei.security.SecurityUtils;
-import org.udv.nrc.cantinadorei.service.UserService;
 import org.udv.nrc.cantinadorei.web.rest.errors.BadRequestAlertException;
-import org.udv.nrc.cantinadorei.web.rest.errors.UserNotAuthorizedException;
 import org.udv.nrc.cantinadorei.web.rest.util.HeaderUtil;
 
 /**
@@ -44,9 +41,6 @@ public class CompraResource {
     private final CompraRepository compraRepository;
     
     private static List<String> canCRDAll;
-
-    @Autowired
-    private UserService userService;
 
     public CompraResource(CompraRepository compraRepository) {
         this.compraRepository = compraRepository;
@@ -84,7 +78,7 @@ public class CompraResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/compras")
-    @PreAuthorize("hasAnyRole('ROLE_DBA', 'ROLE_ADMIN', 'ROLE_OPERATOR')")
+    @PreAuthorize("hasAnyRole('ROLE_DBA', 'ROLE_ADMIN')")
     public ResponseEntity<Compra> updateCompra(@Valid @RequestBody Compra compra) throws URISyntaxException {
         log.debug("REST request to update Compra : {}", compra);
         if (compra.getId() == null) {
@@ -102,10 +96,10 @@ public class CompraResource {
      * @return the ResponseEntity with status 200 (OK) and the list of compras in body
      */
     @GetMapping("/compras")
+    @PreAuthorize("hasAnyRole('ROLE_DBA', 'ROLE_ADMIN', 'ROLE_OPERATOR', 'ROLE_CLIENT')")
     public List<Compra> getAllCompras() {
         log.debug("REST request to get all Compras");
-        String currentUserLogin = SecurityUtils.getCurrentUserLogin().get();
-        if(!userService.isUserInRole(currentUserLogin, canCRDAll)){
+        if(!SecurityUtils.currentUserMatchesRole(canCRDAll)){
             return compraRepository.findByUserIsCurrentUser();
         }
         return compraRepository.findAll();
@@ -125,7 +119,7 @@ public class CompraResource {
             String currentUserLogin = SecurityUtils.getCurrentUserLogin().get();
             if(compra.get().getConta().getUser()
                     .getLogin().equals(currentUserLogin) ||
-                    userService.isUserInRole(currentUserLogin, canCRDAll)) {
+                    SecurityUtils.currentUserMatchesRole(canCRDAll)) {
                 return ResponseEntity.ok(compra.get());
             }
         }

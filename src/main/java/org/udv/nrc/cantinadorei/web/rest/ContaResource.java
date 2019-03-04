@@ -10,7 +10,6 @@ import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,7 +24,6 @@ import org.udv.nrc.cantinadorei.domain.Conta;
 import org.udv.nrc.cantinadorei.repository.ContaRepository;
 import org.udv.nrc.cantinadorei.security.AuthoritiesConstants;
 import org.udv.nrc.cantinadorei.security.SecurityUtils;
-import org.udv.nrc.cantinadorei.service.UserService;
 import org.udv.nrc.cantinadorei.web.rest.errors.BadRequestAlertException;
 import org.udv.nrc.cantinadorei.web.rest.util.HeaderUtil;
 
@@ -43,9 +41,6 @@ public class ContaResource {
     private final ContaRepository contaRepository;
 
     private static List<String> canCRAll;
-
-    @Autowired
-    private UserService userService;
 
     public ContaResource(ContaRepository contaRepository) {
         this.contaRepository = contaRepository;
@@ -103,8 +98,7 @@ public class ContaResource {
     @GetMapping("/contas")
     public List<Conta> getAllContas() {
         log.debug("REST request to get all Contas");
-        String currentUserLogin = SecurityUtils.getCurrentUserLogin().get();
-        if(!userService.isUserInRole(currentUserLogin, canCRAll)){
+        if(!SecurityUtils.currentUserMatchesRole(canCRAll)){
             return contaRepository.findByUserIsCurrentUser();
         }
         return contaRepository.findAll();
@@ -123,7 +117,7 @@ public class ContaResource {
         if(conta.isPresent()) {
             String currentUserLogin = SecurityUtils.getCurrentUserLogin().get();
             if(conta.get().getUser().getLogin().equals(currentUserLogin) ||
-                    userService.isUserInRole(currentUserLogin, canCRAll)) {
+                    SecurityUtils.currentUserMatchesRole(canCRAll)) {
                 return ResponseEntity.ok(conta.get());
             }
         }
