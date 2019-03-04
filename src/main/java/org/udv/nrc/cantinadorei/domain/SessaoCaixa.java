@@ -1,7 +1,5 @@
 package org.udv.nrc.cantinadorei.domain;
 
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -35,7 +33,7 @@ public class SessaoCaixa implements Serializable {
     private Float valorAtual;
 
     @NotNull
-    @Column(name = "data", nullable = false)
+    @Column(name = "data", nullable = false, unique = true)
     private LocalDate data;
 
     @ManyToOne

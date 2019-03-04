@@ -1,23 +1,34 @@
 package org.udv.nrc.cantinadorei.web.rest;
-import org.udv.nrc.cantinadorei.domain.Ressarcimento;
-import org.udv.nrc.cantinadorei.repository.RessarcimentoRepository;
-import org.udv.nrc.cantinadorei.security.AuthoritiesConstants;
-import org.udv.nrc.cantinadorei.security.SecurityUtils;
-import org.udv.nrc.cantinadorei.web.rest.errors.BadRequestAlertException;
-import org.udv.nrc.cantinadorei.web.rest.util.HeaderUtil;
-import io.github.jhipster.web.util.ResponseUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+
+import javax.validation.Valid;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.udv.nrc.cantinadorei.domain.Conta;
+import org.udv.nrc.cantinadorei.domain.Ressarcimento;
+import org.udv.nrc.cantinadorei.repository.ContaRepository;
+import org.udv.nrc.cantinadorei.repository.RessarcimentoRepository;
+import org.udv.nrc.cantinadorei.security.AuthoritiesConstants;
+import org.udv.nrc.cantinadorei.security.SecurityUtils;
+import org.udv.nrc.cantinadorei.web.rest.errors.BadRequestAlertException;
+import org.udv.nrc.cantinadorei.web.rest.util.HeaderUtil;
 
 /**
  * REST controller for managing Ressarcimento.
@@ -33,6 +44,9 @@ public class RessarcimentoResource {
     private final RessarcimentoRepository ressarcimentoRepository;
 
     private static List<String> canCRAll;
+
+    @Autowired
+    private ContaRepository contaRepository;
 
     public RessarcimentoResource(RessarcimentoRepository ressarcimentoRepository) {
         this.ressarcimentoRepository = ressarcimentoRepository;
@@ -54,6 +68,12 @@ public class RessarcimentoResource {
         if (ressarcimento.getId() != null) {
             throw new BadRequestAlertException("A new ressarcimento cannot already have an ID", ENTITY_NAME, "idexists");
         }
+        if(ressarcimento.getConta() == null) {
+            throw new BadRequestAlertException("Apenas clientes podem ter ressarcimentos", ENTITY_NAME, "illegal_assignment");
+        }
+        Conta contaToUpdate = ressarcimento.getConta();
+        contaToUpdate.setSaldoAtual(contaToUpdate.getSaldoAtual() + ressarcimento.getValor());
+        contaRepository.save(contaToUpdate);
         Ressarcimento result = ressarcimentoRepository.save(ressarcimento);
         return ResponseEntity.created(new URI("/api/ressarcimentos/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))

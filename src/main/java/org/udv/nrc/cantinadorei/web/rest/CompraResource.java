@@ -10,6 +10,7 @@ import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,9 +22,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.udv.nrc.cantinadorei.domain.Compra;
+import org.udv.nrc.cantinadorei.domain.Conta;
 import org.udv.nrc.cantinadorei.repository.CompraRepository;
+import org.udv.nrc.cantinadorei.repository.ContaRepository;
 import org.udv.nrc.cantinadorei.security.AuthoritiesConstants;
 import org.udv.nrc.cantinadorei.security.SecurityUtils;
+import org.udv.nrc.cantinadorei.service.UserService;
 import org.udv.nrc.cantinadorei.web.rest.errors.BadRequestAlertException;
 import org.udv.nrc.cantinadorei.web.rest.util.HeaderUtil;
 
@@ -42,6 +46,9 @@ public class CompraResource {
     
     private static List<String> canCRDAll;
 
+    @Autowired
+    private ContaRepository contaRepository;
+    
     public CompraResource(CompraRepository compraRepository) {
         this.compraRepository = compraRepository;
         canCRDAll = Arrays.asList(AuthoritiesConstants.ADMIN, AuthoritiesConstants.OPERATOR,
@@ -62,6 +69,12 @@ public class CompraResource {
         if (compra.getId() != null) {
             throw new BadRequestAlertException("A new compra cannot already have an ID", ENTITY_NAME, "idexists");
         }
+        if(compra.getConta() == null){
+            throw new BadRequestAlertException("Apenas clientes podem ter compras", ENTITY_NAME, "illegal_assignment");
+        }
+        Conta contaToUpdate = compra.getConta();
+        contaToUpdate.setSaldoAtual(contaToUpdate.getSaldoAtual() + compra.getValorTotal());
+        contaRepository.save(contaToUpdate);
         Compra result = compraRepository.save(compra);
         return ResponseEntity.created(new URI("/api/compras/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))

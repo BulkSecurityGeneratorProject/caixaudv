@@ -1,11 +1,15 @@
 package org.udv.nrc.cantinadorei.web.rest;
 import org.udv.nrc.cantinadorei.domain.SessaoCaixa;
 import org.udv.nrc.cantinadorei.repository.SessaoCaixaRepository;
+import org.udv.nrc.cantinadorei.security.AuthoritiesConstants;
+import org.udv.nrc.cantinadorei.security.SecurityUtils;
+import org.udv.nrc.cantinadorei.service.UserService;
 import org.udv.nrc.cantinadorei.web.rest.errors.BadRequestAlertException;
 import org.udv.nrc.cantinadorei.web.rest.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
-
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,6 +33,9 @@ public class SessaoCaixaResource {
     private static final String ENTITY_NAME = "sessaoCaixa";
 
     private final SessaoCaixaRepository sessaoCaixaRepository;
+
+    @Autowired
+    private UserService userService;
 
     public SessaoCaixaResource(SessaoCaixaRepository sessaoCaixaRepository) {
         this.sessaoCaixaRepository = sessaoCaixaRepository;
@@ -47,6 +54,11 @@ public class SessaoCaixaResource {
         log.debug("REST request to save SessaoCaixa : {}", sessaoCaixa);
         if (sessaoCaixa.getId() != null) {
             throw new BadRequestAlertException("A new sessaoCaixa cannot already have an ID", ENTITY_NAME, "idexists");
+        }
+        if(!userService.isUserInRole(sessaoCaixa.getUser().getLogin(), 
+                Arrays.asList(AuthoritiesConstants.ADMIN, AuthoritiesConstants.OPERATOR))) {
+            throw new BadRequestAlertException("Apenas administradores e operadores podem ter uma sessãoCaixa", 
+                ENTITY_NAME, "illegal_assignment");
         }
         SessaoCaixa result = sessaoCaixaRepository.save(sessaoCaixa);
         return ResponseEntity.created(new URI("/api/sessao-caixas/" + result.getId()))
