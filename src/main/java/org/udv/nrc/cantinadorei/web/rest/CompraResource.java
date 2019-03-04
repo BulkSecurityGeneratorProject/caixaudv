@@ -73,7 +73,7 @@ public class CompraResource {
             throw new BadRequestAlertException("Apenas clientes podem ter compras", ENTITY_NAME, "illegal_assignment");
         }
         Conta contaToUpdate = compra.getConta();
-        contaToUpdate.setSaldoAtual(contaToUpdate.getSaldoAtual() + compra.getValorTotal());
+        contaToUpdate.setSaldoAtual(contaToUpdate.getSaldoAtual() - compra.getValorTotal());
         contaRepository.save(contaToUpdate);
         Compra result = compraRepository.save(compra);
         return ResponseEntity.created(new URI("/api/compras/" + result.getId()))
