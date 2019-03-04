@@ -27,7 +27,6 @@ import org.udv.nrc.cantinadorei.repository.CompraRepository;
 import org.udv.nrc.cantinadorei.repository.ContaRepository;
 import org.udv.nrc.cantinadorei.security.AuthoritiesConstants;
 import org.udv.nrc.cantinadorei.security.SecurityUtils;
-import org.udv.nrc.cantinadorei.service.UserService;
 import org.udv.nrc.cantinadorei.web.rest.errors.BadRequestAlertException;
 import org.udv.nrc.cantinadorei.web.rest.util.HeaderUtil;
 
@@ -68,14 +67,17 @@ public class CompraResource {
         log.debug("REST request to save Compra : {}", compra);
         if (compra.getId() != null) {
             throw new BadRequestAlertException("A new compra cannot already have an ID", ENTITY_NAME, "idexists");
-        }
+        }   
         if(compra.getConta() == null){
-            throw new BadRequestAlertException("Apenas clientes podem ter compras", ENTITY_NAME, "illegal_assignment");
+            throw new BadRequestAlertException("Apenas clientes podem ter compras", ENTITY_NAME, "illegalAssignment");
         }
+
+        //Subtract from conta the compra total value
         Conta contaToUpdate = compra.getConta();
         contaToUpdate.setSaldoAtual(contaToUpdate.getSaldoAtual() - compra.getValorTotal());
-        contaRepository.save(contaToUpdate);
+        contaRepository.save(compra.getConta());
         Compra result = compraRepository.save(compra);
+
         return ResponseEntity.created(new URI("/api/compras/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -97,7 +99,22 @@ public class CompraResource {
         if (compra.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
+        if(compra.getConta() == null){
+            throw new BadRequestAlertException("Apenas clientes podem ter compras", ENTITY_NAME, "illegalAssignment");
+        }
+
+        //Rollback compra
+        Compra previousCompra = compraRepository.getOne(compra.getId());
+        Conta contaToUpdate = previousCompra.getConta();
+        contaToUpdate.setSaldoAtual(contaToUpdate.getSaldoAtual() + compra.getValorTotal());
+        contaRepository.save(contaToUpdate);
+
+        //Update compra
+        contaToUpdate = compra.getConta(); //new assignment to current compra's conta
+        contaToUpdate.setSaldoAtual(contaToUpdate.getSaldoAtual() - compra.getValorTotal());
+        contaRepository.save(contaToUpdate);
         Compra result = compraRepository.save(compra);
+
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, compra.getId().toString()))
             .body(result);
@@ -148,7 +165,14 @@ public class CompraResource {
     @DeleteMapping("/compras/{id}")
     @PreAuthorize("hasAnyRole('ROLE_DBA', 'ROLE_ADMIN', 'ROLE_OPERATOR')")
     public ResponseEntity<Void> deleteCompra(@PathVariable Long id) {
-        log.debug("REST request to delete Compra : {}", id);        
+        log.debug("REST request to delete Compra : {}", id);   
+        
+        //Rollback compra
+        Compra previousCompra = compraRepository.getOne(id);
+        Conta contaToUpdate = previousCompra.getConta();
+        contaToUpdate.setSaldoAtual(contaToUpdate.getSaldoAtual() + previousCompra.getValorTotal());
+        contaRepository.save(contaToUpdate);
+        
         compraRepository.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }

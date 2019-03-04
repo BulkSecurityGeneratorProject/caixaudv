@@ -68,7 +68,8 @@ public class ContaResource {
             throw new BadRequestAlertException("A new conta cannot already have an ID", ENTITY_NAME, "idexists");
         }
         if(!userService.isUserInRole(conta.getUser().getLogin(), Arrays.asList(AuthoritiesConstants.CLIENT))) {
-            throw new BadRequestAlertException("Apenas clientes podem ter uma conta", ENTITY_NAME, "illegal_assignment");
+            throw new BadRequestAlertException("Apenas clientes podem ter uma conta do caixa", 
+                ENTITY_NAME, "illegalAssignment");
         }
         Conta result = contaRepository.save(conta);
         return ResponseEntity.created(new URI("/api/contas/" + result.getId()))
@@ -91,6 +92,9 @@ public class ContaResource {
         log.debug("REST request to update Conta : {}", conta);
         if (conta.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        if(!userService.isUserInRole(conta.getUser().getLogin(), Arrays.asList(AuthoritiesConstants.CLIENT))) {
+            throw new BadRequestAlertException("Apenas clientes podem ter uma conta", ENTITY_NAME, "illegalAssignment");
         }
         Conta result = contaRepository.save(conta);
         return ResponseEntity.ok()

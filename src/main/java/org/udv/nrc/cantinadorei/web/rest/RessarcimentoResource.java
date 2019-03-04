@@ -71,10 +71,13 @@ public class RessarcimentoResource {
         if(ressarcimento.getConta() == null) {
             throw new BadRequestAlertException("Apenas clientes podem ter ressarcimentos", ENTITY_NAME, "illegal_assignment");
         }
+
+        //Add to conta the ressarcimento value 
         Conta contaToUpdate = ressarcimento.getConta();
         contaToUpdate.setSaldoAtual(contaToUpdate.getSaldoAtual() + ressarcimento.getValor());
         contaRepository.save(contaToUpdate);
         Ressarcimento result = ressarcimentoRepository.save(ressarcimento);
+        
         return ResponseEntity.created(new URI("/api/ressarcimentos/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -95,6 +98,9 @@ public class RessarcimentoResource {
         log.debug("REST request to update Ressarcimento : {}", ressarcimento);
         if (ressarcimento.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        if(ressarcimento.getConta() == null) {
+            throw new BadRequestAlertException("Apenas clientes podem ter ressarcimentos", ENTITY_NAME, "illegalAssignment");
         }
         Ressarcimento result = ressarcimentoRepository.save(ressarcimento);
         return ResponseEntity.ok()
@@ -149,6 +155,10 @@ public class RessarcimentoResource {
     @PreAuthorize("hasAnyRole('ROLE_DBA', 'ROLE_ADMIN', 'ROLE_OPERATOR')")
     public ResponseEntity<Void> deleteRessarcimento(@PathVariable Long id) {
         log.debug("REST request to delete Ressarcimento : {}", id);
+        Ressarcimento ressarcimento = ressarcimentoRepository.getOne(id);
+        Conta contaToUpdate = ressarcimento.getConta();
+        contaToUpdate.setSaldoAtual(contaToUpdate.getSaldoAtual() - ressarcimento.getValor());
+        contaRepository.save(contaToUpdate);
         ressarcimentoRepository.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }

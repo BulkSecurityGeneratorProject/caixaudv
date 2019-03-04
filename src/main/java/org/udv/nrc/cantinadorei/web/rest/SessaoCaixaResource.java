@@ -60,6 +60,9 @@ public class SessaoCaixaResource {
             throw new BadRequestAlertException("Apenas administradores e operadores podem ter uma sessãoCaixa", 
                 ENTITY_NAME, "illegal_assignment");
         }
+        if(sessaoCaixaRepository.findOneByDate(sessaoCaixa.getData()).isPresent()){
+            throw new BadRequestAlertException("Já existe sessaoCaixa nesta data", ENTITY_NAME, "duplicateSessaoCaixa");
+        }
         SessaoCaixa result = sessaoCaixaRepository.save(sessaoCaixa);
         return ResponseEntity.created(new URI("/api/sessao-caixas/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
@@ -81,6 +84,14 @@ public class SessaoCaixaResource {
         log.debug("REST request to update SessaoCaixa : {}", sessaoCaixa);
         if (sessaoCaixa.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        if(!userService.isUserInRole(sessaoCaixa.getUser().getLogin(), 
+                Arrays.asList(AuthoritiesConstants.ADMIN, AuthoritiesConstants.OPERATOR))) {
+            throw new BadRequestAlertException("Apenas administradores e operadores podem ter uma sessãoCaixa", 
+                ENTITY_NAME, "illegal_assignment");
+        }
+        if(sessaoCaixaRepository.findOneByDate(sessaoCaixa.getData()).isPresent()){
+            throw new BadRequestAlertException("Já existe sessaoCaixa nesta data", ENTITY_NAME, "validation");
         }
         SessaoCaixa result = sessaoCaixaRepository.save(sessaoCaixa);
         return ResponseEntity.ok()

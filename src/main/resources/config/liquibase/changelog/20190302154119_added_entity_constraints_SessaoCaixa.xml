@@ -14,5 +14,12 @@
                                  referencedColumnNames="id"
                                  referencedTableName="jhi_user"/>
 
+        <addUniqueConstraint columnNames="data"
+                             constraintName="unique_sessao_caixa_data"
+                             deferrable="true"
+                             disabled="false"
+                             initiallyDeferred="true"
+                             schemaName="public"
+                             tableName="sessao_caixa"/>
     </changeSet>
 </databaseChangeLog>
