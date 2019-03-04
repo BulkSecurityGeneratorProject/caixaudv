@@ -24,8 +24,7 @@ entity Conta {
 }
 
 entity Ressarcimento {
-    valor Float required min(0),
-    data LocalDate required
+    valor Float required min(0)
 }
 
 relationship ManyToOne {

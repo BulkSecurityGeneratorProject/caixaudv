@@ -33,7 +33,7 @@ export const ressarcimentoRoute: Routes = [
         path: '',
         component: RessarcimentoComponent,
         data: {
-            authorities: ['ROLE_DBA', 'ROLE_ADMIN', 'ROLE_OPERATOR', 'ROLE_CANTINIER', 'ROLE_CLIENT'],
+            authorities: ['ROLE_USER'],
             pageTitle: 'cantinadoreiApp.ressarcimento.home.title'
         },
         canActivate: [UserRouteAccessService]
@@ -45,7 +45,7 @@ export const ressarcimentoRoute: Routes = [
             ressarcimento: RessarcimentoResolve
         },
         data: {
-            authorities: ['ROLE_DBA', 'ROLE_ADMIN', 'ROLE_OPERATOR', 'ROLE_CANTINIER', 'ROLE_CLIENT'],
+            authorities: ['ROLE_USER'],
             pageTitle: 'cantinadoreiApp.ressarcimento.home.title'
         },
         canActivate: [UserRouteAccessService]
@@ -57,7 +57,7 @@ export const ressarcimentoRoute: Routes = [
             ressarcimento: RessarcimentoResolve
         },
         data: {
-            authorities: ['ROLE_DBA', 'ROLE_ADMIN', 'ROLE_OPERATOR', 'ROLE_CANTINIER', 'ROLE_CLIENT'],
+            authorities: ['ROLE_USER'],
             pageTitle: 'cantinadoreiApp.ressarcimento.home.title'
         },
         canActivate: [UserRouteAccessService]
@@ -69,7 +69,7 @@ export const ressarcimentoRoute: Routes = [
             ressarcimento: RessarcimentoResolve
         },
         data: {
-            authorities: ['ROLE_DBA', 'ROLE_ADMIN', 'ROLE_OPERATOR', 'ROLE_CANTINIER', 'ROLE_CLIENT'],
+            authorities: ['ROLE_USER'],
             pageTitle: 'cantinadoreiApp.ressarcimento.home.title'
         },
         canActivate: [UserRouteAccessService]
@@ -84,7 +84,7 @@ export const ressarcimentoPopupRoute: Routes = [
             ressarcimento: RessarcimentoResolve
         },
         data: {
-            authorities: ['ROLE_DBA', 'ROLE_ADMIN', 'ROLE_OPERATOR', 'ROLE_CANTINIER', 'ROLE_CLIENT'],
+            authorities: ['ROLE_USER'],
             pageTitle: 'cantinadoreiApp.ressarcimento.home.title'
         },
         canActivate: [UserRouteAccessService],

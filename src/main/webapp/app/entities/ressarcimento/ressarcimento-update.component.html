@@ -28,22 +28,6 @@
                         </small>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label class="form-control-label" jhiTranslate="cantinadoreiApp.ressarcimento.data" for="field_data">Data</label>
-                    <div class="input-group">
-                        <input id="field_data" type="text" class="form-control" name="data" ngbDatepicker  #dataDp="ngbDatepicker" [(ngModel)]="ressarcimento.data"
-                        required/>
-                        <span class="input-group-append">
-                            <button type="button" class="btn btn-secondary" (click)="dataDp.toggle()"><fa-icon [icon]="'calendar-alt'"></fa-icon></button>
-                        </span>
-                    </div>
-                    <div [hidden]="!(editForm.controls.data?.dirty && editForm.controls.data?.invalid)">
-                        <small class="form-text text-danger"
-                        [hidden]="!editForm.controls.data?.errors?.required" jhiTranslate="entity.validation.required">
-                        This field is required.
-                        </small>
-                    </div>
-                </div>
 
                 <div class="form-group">
                     <label class="form-control-label" jhiTranslate="cantinadoreiApp.ressarcimento.sessaoCaixa" for="field_sessaoCaixa">Sessao Caixa</label>

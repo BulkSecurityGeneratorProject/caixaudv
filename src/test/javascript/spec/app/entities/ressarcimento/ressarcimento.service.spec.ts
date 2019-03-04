@@ -4,8 +4,6 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { of } from 'rxjs';
 import { take, map } from 'rxjs/operators';
-import * as moment from 'moment';
-import { DATE_FORMAT } from 'app/shared/constants/input.constants';
 import { RessarcimentoService } from 'app/entities/ressarcimento/ressarcimento.service';
 import { IRessarcimento, Ressarcimento } from 'app/shared/model/ressarcimento.model';
 
@@ -15,7 +13,6 @@ describe('Service Tests', () => {
         let service: RessarcimentoService;
         let httpMock: HttpTestingController;
         let elemDefault: IRessarcimento;
-        let currentDate: moment.Moment;
         beforeEach(() => {
             TestBed.configureTestingModule({
                 imports: [HttpClientTestingModule]
@@ -23,19 +20,13 @@ describe('Service Tests', () => {
             injector = getTestBed();
             service = injector.get(RessarcimentoService);
             httpMock = injector.get(HttpTestingController);
-            currentDate = moment();
 
-            elemDefault = new Ressarcimento(0, 0, currentDate);
+            elemDefault = new Ressarcimento(0, 0);
         });
 
         describe('Service methods', async () => {
             it('should find an element', async () => {
-                const returnedFromService = Object.assign(
-                    {
-                        data: currentDate.format(DATE_FORMAT)
-                    },
-                    elemDefault
-                );
+                const returnedFromService = Object.assign({}, elemDefault);
                 service
                     .find(123)
                     .pipe(take(1))
@@ -48,17 +39,11 @@ describe('Service Tests', () => {
             it('should create a Ressarcimento', async () => {
                 const returnedFromService = Object.assign(
                     {
-                        id: 0,
-                        data: currentDate.format(DATE_FORMAT)
+                        id: 0
                     },
                     elemDefault
                 );
-                const expected = Object.assign(
-                    {
-                        data: currentDate
-                    },
-                    returnedFromService
-                );
+                const expected = Object.assign({}, returnedFromService);
                 service
                     .create(new Ressarcimento(null))
                     .pipe(take(1))
@@ -70,18 +55,12 @@ describe('Service Tests', () => {
             it('should update a Ressarcimento', async () => {
                 const returnedFromService = Object.assign(
                     {
-                        valor: 1,
-                        data: currentDate.format(DATE_FORMAT)
+                        valor: 1
                     },
                     elemDefault
                 );
 
-                const expected = Object.assign(
-                    {
-                        data: currentDate
-                    },
-                    returnedFromService
-                );
+                const expected = Object.assign({}, returnedFromService);
                 service
                     .update(expected)
                     .pipe(take(1))
@@ -93,17 +72,11 @@ describe('Service Tests', () => {
             it('should return a list of Ressarcimento', async () => {
                 const returnedFromService = Object.assign(
                     {
-                        valor: 1,
-                        data: currentDate.format(DATE_FORMAT)
+                        valor: 1
                     },
                     elemDefault
                 );
-                const expected = Object.assign(
-                    {
-                        data: currentDate
-                    },
-                    returnedFromService
-                );
+                const expected = Object.assign({}, returnedFromService);
                 service
                     .query(expected)
                     .pipe(

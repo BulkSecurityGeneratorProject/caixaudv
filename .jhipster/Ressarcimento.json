@@ -9,13 +9,6 @@
                 "min"
             ],
             "fieldValidateRulesMin": 0
-        },
-        {
-            "fieldName": "data",
-            "fieldType": "LocalDate",
-            "fieldValidateRules": [
-                "required"
-            ]
         }
     ],
     "relationships": [

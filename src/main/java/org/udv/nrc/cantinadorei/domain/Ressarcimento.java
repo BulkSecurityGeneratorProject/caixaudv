@@ -9,7 +9,6 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.util.Objects;
 
 /**
@@ -30,10 +29,6 @@ public class Ressarcimento implements Serializable {
     @DecimalMin(value = "0")
     @Column(name = "valor", nullable = false)
     private Float valor;
-
-    @NotNull
-    @Column(name = "data", nullable = false)
-    private LocalDate data;
 
     @ManyToOne
     @JsonIgnoreProperties("ressarcimentos")
@@ -63,19 +58,6 @@ public class Ressarcimento implements Serializable {
 
     public void setValor(Float valor) {
         this.valor = valor;
-    }
-
-    public LocalDate getData() {
-        return data;
-    }
-
-    public Ressarcimento data(LocalDate data) {
-        this.data = data;
-        return this;
-    }
-
-    public void setData(LocalDate data) {
-        this.data = data;
     }
 
     public SessaoCaixa getSessaoCaixa() {
@@ -130,7 +112,6 @@ public class Ressarcimento implements Serializable {
         return "Ressarcimento{" +
             "id=" + getId() +
             ", valor=" + getValor() +
-            ", data='" + getData() + "'" +
             "}";
     }
 }

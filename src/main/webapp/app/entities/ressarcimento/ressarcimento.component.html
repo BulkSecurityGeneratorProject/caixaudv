@@ -16,7 +16,6 @@
             <tr>
             <th><span jhiTranslate="global.field.id">ID</span></th>
             <th><span jhiTranslate="cantinadoreiApp.ressarcimento.valor">Valor</span></th>
-            <th><span jhiTranslate="cantinadoreiApp.ressarcimento.data">Data</span></th>
             <th><span jhiTranslate="cantinadoreiApp.ressarcimento.sessaoCaixa">Sessao Caixa</span></th>
             <th><span jhiTranslate="cantinadoreiApp.ressarcimento.conta">Conta</span></th>
             <th></th>
@@ -26,7 +25,6 @@
             <tr *ngFor="let ressarcimento of ressarcimentos ;trackBy: trackId">
                 <td><a [routerLink]="['/ressarcimento', ressarcimento.id, 'view' ]">{{ressarcimento.id}}</a></td>
                 <td>{{ressarcimento.valor}}</td>
-                <td>{{ressarcimento.data | date:'mediumDate'}}</td>
                 <td>
                     <div *ngIf="ressarcimento.sessaoCaixa">
                         <a [routerLink]="['../sessao-caixa', ressarcimento.sessaoCaixa?.id, 'view' ]" >{{ressarcimento.sessaoCaixa?.id}}</a>

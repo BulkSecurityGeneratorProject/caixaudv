@@ -27,7 +27,6 @@ export class RessarcimentoUpdatePage {
     saveButton = element(by.id('save-entity'));
     cancelButton = element(by.id('cancel-save'));
     valorInput = element(by.id('field_valor'));
-    dataInput = element(by.id('field_data'));
     sessaoCaixaSelect = element(by.id('field_sessaoCaixa'));
     contaSelect = element(by.id('field_conta'));
 
@@ -41,14 +40,6 @@ export class RessarcimentoUpdatePage {
 
     async getValorInput() {
         return this.valorInput.getAttribute('value');
-    }
-
-    async setDataInput(data) {
-        await this.dataInput.sendKeys(data);
-    }
-
-    async getDataInput() {
-        return this.dataInput.getAttribute('value');
     }
 
     async sessaoCaixaSelectLastOption() {

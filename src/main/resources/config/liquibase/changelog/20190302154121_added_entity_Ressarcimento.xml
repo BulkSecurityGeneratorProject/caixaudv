@@ -26,10 +26,6 @@
                 <constraints nullable="false" />
             </column>
 
-            <column name="data" type="date">
-                <constraints nullable="false" />
-            </column>
-
             <column name="sessao_caixa_id" type="bigint">
                 <constraints nullable="true" />
             </column>

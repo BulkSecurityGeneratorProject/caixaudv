@@ -22,8 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
 
 import javax.persistence.EntityManager;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.List;
 
 
@@ -44,9 +42,6 @@ public class RessarcimentoResourceIntTest {
 
     private static final Float DEFAULT_VALOR = 0F;
     private static final Float UPDATED_VALOR = 1F;
-
-    private static final LocalDate DEFAULT_DATA = LocalDate.ofEpochDay(0L);
-    private static final LocalDate UPDATED_DATA = LocalDate.now(ZoneId.systemDefault());
 
     @Autowired
     private RessarcimentoRepository ressarcimentoRepository;
@@ -90,8 +85,7 @@ public class RessarcimentoResourceIntTest {
      */
     public static Ressarcimento createEntity(EntityManager em) {
         Ressarcimento ressarcimento = new Ressarcimento()
-            .valor(DEFAULT_VALOR)
-            .data(DEFAULT_DATA);
+            .valor(DEFAULT_VALOR);
         return ressarcimento;
     }
 
@@ -116,7 +110,6 @@ public class RessarcimentoResourceIntTest {
         assertThat(ressarcimentoList).hasSize(databaseSizeBeforeCreate + 1);
         Ressarcimento testRessarcimento = ressarcimentoList.get(ressarcimentoList.size() - 1);
         assertThat(testRessarcimento.getValor()).isEqualTo(DEFAULT_VALOR);
-        assertThat(testRessarcimento.getData()).isEqualTo(DEFAULT_DATA);
     }
 
     @Test
@@ -158,24 +151,6 @@ public class RessarcimentoResourceIntTest {
 
     @Test
     @Transactional
-    public void checkDataIsRequired() throws Exception {
-        int databaseSizeBeforeTest = ressarcimentoRepository.findAll().size();
-        // set the field null
-        ressarcimento.setData(null);
-
-        // Create the Ressarcimento, which fails.
-
-        restRessarcimentoMockMvc.perform(post("/api/ressarcimentos")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(ressarcimento)))
-            .andExpect(status().isBadRequest());
-
-        List<Ressarcimento> ressarcimentoList = ressarcimentoRepository.findAll();
-        assertThat(ressarcimentoList).hasSize(databaseSizeBeforeTest);
-    }
-
-    @Test
-    @Transactional
     public void getAllRessarcimentos() throws Exception {
         // Initialize the database
         ressarcimentoRepository.saveAndFlush(ressarcimento);
@@ -185,8 +160,7 @@ public class RessarcimentoResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(ressarcimento.getId().intValue())))
-            .andExpect(jsonPath("$.[*].valor").value(hasItem(DEFAULT_VALOR.doubleValue())))
-            .andExpect(jsonPath("$.[*].data").value(hasItem(DEFAULT_DATA.toString())));
+            .andExpect(jsonPath("$.[*].valor").value(hasItem(DEFAULT_VALOR.doubleValue())));
     }
     
     @Test
@@ -200,8 +174,7 @@ public class RessarcimentoResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(ressarcimento.getId().intValue()))
-            .andExpect(jsonPath("$.valor").value(DEFAULT_VALOR.doubleValue()))
-            .andExpect(jsonPath("$.data").value(DEFAULT_DATA.toString()));
+            .andExpect(jsonPath("$.valor").value(DEFAULT_VALOR.doubleValue()));
     }
 
     @Test
@@ -225,8 +198,7 @@ public class RessarcimentoResourceIntTest {
         // Disconnect from session so that the updates on updatedRessarcimento are not directly saved in db
         em.detach(updatedRessarcimento);
         updatedRessarcimento
-            .valor(UPDATED_VALOR)
-            .data(UPDATED_DATA);
+            .valor(UPDATED_VALOR);
 
         restRessarcimentoMockMvc.perform(put("/api/ressarcimentos")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -238,7 +210,6 @@ public class RessarcimentoResourceIntTest {
         assertThat(ressarcimentoList).hasSize(databaseSizeBeforeUpdate);
         Ressarcimento testRessarcimento = ressarcimentoList.get(ressarcimentoList.size() - 1);
         assertThat(testRessarcimento.getValor()).isEqualTo(UPDATED_VALOR);
-        assertThat(testRessarcimento.getData()).isEqualTo(UPDATED_DATA);
     }
 
     @Test

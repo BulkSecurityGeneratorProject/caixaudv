@@ -3,7 +3,6 @@ import { ActivatedRoute } from '@angular/router';
 import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import * as moment from 'moment';
 import { JhiAlertService } from 'ng-jhipster';
 import { IRessarcimento } from 'app/shared/model/ressarcimento.model';
 import { RessarcimentoService } from './ressarcimento.service';
@@ -23,7 +22,6 @@ export class RessarcimentoUpdateComponent implements OnInit {
     sessaocaixas: ISessaoCaixa[];
 
     contas: IConta[];
-    dataDp: any;
 
     constructor(
         protected jhiAlertService: JhiAlertService,

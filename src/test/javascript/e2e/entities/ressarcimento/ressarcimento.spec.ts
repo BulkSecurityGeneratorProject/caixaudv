@@ -41,12 +41,10 @@ describe('Ressarcimento e2e test', () => {
         await ressarcimentoComponentsPage.clickOnCreateButton();
         await promise.all([
             ressarcimentoUpdatePage.setValorInput('5'),
-            ressarcimentoUpdatePage.setDataInput('2000-12-31'),
             ressarcimentoUpdatePage.sessaoCaixaSelectLastOption(),
             ressarcimentoUpdatePage.contaSelectLastOption()
         ]);
         expect(await ressarcimentoUpdatePage.getValorInput()).to.eq('5');
-        expect(await ressarcimentoUpdatePage.getDataInput()).to.eq('2000-12-31');
         await ressarcimentoUpdatePage.save();
         expect(await ressarcimentoUpdatePage.getSaveButton().isPresent()).to.be.false;
 
