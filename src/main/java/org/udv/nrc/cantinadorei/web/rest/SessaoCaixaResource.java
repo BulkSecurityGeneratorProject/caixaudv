@@ -2,7 +2,6 @@ package org.udv.nrc.cantinadorei.web.rest;
 import org.udv.nrc.cantinadorei.domain.SessaoCaixa;
 import org.udv.nrc.cantinadorei.repository.SessaoCaixaRepository;
 import org.udv.nrc.cantinadorei.security.AuthoritiesConstants;
-import org.udv.nrc.cantinadorei.security.SecurityUtils;
 import org.udv.nrc.cantinadorei.service.UserService;
 import org.udv.nrc.cantinadorei.web.rest.errors.BadRequestAlertException;
 import org.udv.nrc.cantinadorei.web.rest.util.HeaderUtil;
@@ -55,6 +54,9 @@ public class SessaoCaixaResource {
         if (sessaoCaixa.getId() != null) {
             throw new BadRequestAlertException("A new sessaoCaixa cannot already have an ID", ENTITY_NAME, "idexists");
         }
+        if(sessaoCaixa.getUser() == null) {
+            throw new BadRequestAlertException("Deve haver um usuário registrado nesta sessão do caixa", ENTITY_NAME, "nullUser");
+        }
         if(!userService.isUserInRole(sessaoCaixa.getUser().getLogin(), 
                 Arrays.asList(AuthoritiesConstants.ADMIN, AuthoritiesConstants.OPERATOR))) {
             throw new BadRequestAlertException("Apenas administradores e operadores podem ter uma sessãoCaixa", 
@@ -85,13 +87,13 @@ public class SessaoCaixaResource {
         if (sessaoCaixa.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if(!userService.isUserInRole(sessaoCaixa.getUser().getLogin(), 
-                Arrays.asList(AuthoritiesConstants.ADMIN, AuthoritiesConstants.OPERATOR))) {
-            throw new BadRequestAlertException("Apenas administradores e operadores podem ter uma sessãoCaixa", 
-                ENTITY_NAME, "illegal_assignment");
+        if(sessaoCaixa.getUser() == null) {
+            throw new BadRequestAlertException("Deve haver um usuário registrado nesta sessão do caixa", ENTITY_NAME, "nullUser");
         }
-        if(sessaoCaixaRepository.findOneByDate(sessaoCaixa.getData()).isPresent()){
-            throw new BadRequestAlertException("Já existe sessaoCaixa nesta data", ENTITY_NAME, "validation");
+        else if(!userService.isUserInRole(sessaoCaixa.getUser().getLogin(), 
+                Arrays.asList(AuthoritiesConstants.ADMIN, AuthoritiesConstants.OPERATOR))) {
+            throw new BadRequestAlertException("Apenas administradores e operadores podem ter uma sessão do caixa associada", 
+                ENTITY_NAME, "illegalSessaoCaixaAssignment");
         }
         SessaoCaixa result = sessaoCaixaRepository.save(sessaoCaixa);
         return ResponseEntity.ok()

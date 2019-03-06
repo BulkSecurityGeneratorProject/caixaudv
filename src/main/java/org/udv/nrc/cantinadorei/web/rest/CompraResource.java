@@ -2,9 +2,11 @@ package org.udv.nrc.cantinadorei.web.rest;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -13,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +28,7 @@ import org.udv.nrc.cantinadorei.domain.Compra;
 import org.udv.nrc.cantinadorei.domain.Conta;
 import org.udv.nrc.cantinadorei.repository.CompraRepository;
 import org.udv.nrc.cantinadorei.repository.ContaRepository;
+import org.udv.nrc.cantinadorei.repository.SessaoCaixaRepository;
 import org.udv.nrc.cantinadorei.security.AuthoritiesConstants;
 import org.udv.nrc.cantinadorei.security.SecurityUtils;
 import org.udv.nrc.cantinadorei.web.rest.errors.BadRequestAlertException;
@@ -47,6 +51,9 @@ public class CompraResource {
 
     @Autowired
     private ContaRepository contaRepository;
+
+    @Autowired
+    private SessaoCaixaRepository sessaoCaixaRepository;
     
     public CompraResource(CompraRepository compraRepository) {
         this.compraRepository = compraRepository;
@@ -65,6 +72,9 @@ public class CompraResource {
     @PreAuthorize("hasAnyRole('ROLE_DBA', 'ROLE_ADMIN', 'ROLE_OPERATOR')")
     public ResponseEntity<Compra> createCompra(@Valid @RequestBody Compra compra) throws URISyntaxException {
         log.debug("REST request to save Compra : {}", compra);
+        if(!sessaoCaixaRepository.findOneByDate(LocalDate.now()).isPresent()) {
+            throw new BadRequestAlertException("Não há sessão do caixa registrada para hoje", ENTITY_NAME, "noSessaoCaixa");
+        }
         if (compra.getId() != null) {
             throw new BadRequestAlertException("A new compra cannot already have an ID", ENTITY_NAME, "idexists");
         }   
@@ -73,10 +83,7 @@ public class CompraResource {
         }
 
         //Subtract from conta the compra total value
-        Conta contaToUpdate = compra.getConta();
-        contaToUpdate.setSaldoAtual(contaToUpdate.getSaldoAtual() - compra.getValorTotal());
-        contaRepository.save(compra.getConta());
-        Compra result = compraRepository.save(compra);
+        Compra result = updateCompraData(compra);
 
         return ResponseEntity.created(new URI("/api/compras/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
@@ -103,17 +110,9 @@ public class CompraResource {
             throw new BadRequestAlertException("Apenas clientes podem ter compras", ENTITY_NAME, "illegalAssignment");
         }
 
-        //Rollback compra
-        Compra previousCompra = compraRepository.getOne(compra.getId());
-        Conta contaToUpdate = previousCompra.getConta();
-        contaToUpdate.setSaldoAtual(contaToUpdate.getSaldoAtual() + compra.getValorTotal());
-        contaRepository.save(contaToUpdate);
-
-        //Update compra
-        contaToUpdate = compra.getConta(); //new assignment to current compra's conta
-        contaToUpdate.setSaldoAtual(contaToUpdate.getSaldoAtual() - compra.getValorTotal());
-        contaRepository.save(contaToUpdate);
-        Compra result = compraRepository.save(compra);
+        //Rollback previous compra and update it
+        rollbackCompraData(compra.getId());
+        Compra result = updateCompraData(compra);
 
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, compra.getId().toString()))
@@ -168,12 +167,49 @@ public class CompraResource {
         log.debug("REST request to delete Compra : {}", id);   
         
         //Rollback compra
-        Compra previousCompra = compraRepository.getOne(id);
-        Conta contaToUpdate = previousCompra.getConta();
-        contaToUpdate.setSaldoAtual(contaToUpdate.getSaldoAtual() + previousCompra.getValorTotal());
-        contaRepository.save(contaToUpdate);
+        rollbackCompraData(id);
         
         compraRepository.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
+    }
+
+    /**
+     * Given a compra bean, the point of
+     * this method is to update the compra data
+     * by subtracting compra's conta total value 
+     * from the compras's one
+     */
+    private Compra updateCompraData(Compra compra) {
+        //trick to get the current state of compra's conta
+        Conta contaToUpdate = contaRepository.findAll().stream()
+            .filter(conta -> compra.getConta().getId().equals(conta.getId()))
+            .collect(Collectors.toList()).get(0);
+        contaToUpdate.setSaldoAtual(contaToUpdate.getSaldoAtual() - compra.getValorTotal());
+        contaRepository.save(contaToUpdate);
+        return compraRepository.save(compra);
+    }
+
+    /**
+     * Given a compra's Id, the point of 
+     * this method is to rollback (undo) the compra
+     * effects to compra's current user conta,
+     * giving back the compra's total value to 
+     * user conta's total balance.
+     * 
+     * In updateCompra method, this method MUST 
+     * preceed updateCompraData method, in order to 
+     * rollback compra data an prepare to update it.
+     * 
+     * @see updateCompra
+     * @see updateCompraData
+     */
+    private void rollbackCompraData(Long compraId) {
+        //trick to avoid JPA session error
+        Compra previousCompra = compraRepository.findAll().stream()
+            .filter(compra -> compra.getId().equals(compraId))
+            .collect(Collectors.toList()).get(0); //same as get compra by id
+        Conta contaToRollback = previousCompra.getConta();
+        contaToRollback.setSaldoAtual(contaToRollback.getSaldoAtual() + previousCompra.getValorTotal());
+        contaRepository.save(contaToRollback);
     }
 }

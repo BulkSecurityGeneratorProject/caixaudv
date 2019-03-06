@@ -6,10 +6,14 @@
             "403": "Você não tem autorização para acessar esta página.",
             "404": "A página não existe.",
             "405": "The HTTP verb you used is not supported for this URL.",
-            "500": "Internal server error."
+            "500": "Erro interno do servidor. Contate o Administrador (DBA)."
         },
         "illegalAssignment": "Apenas clientes podem ter uma conta do caixa",
-        "duplicateSessaoCaixa": "Já existe sessão do caixa nesta data",
+        "illegalSessaoCaixaAssignment": "Apenas administradores e operadores podem ter uma sessão do caixa associada.",
+        "noSessaoCaixa": "Não há sessão do caixa registrada para hoje.",
+        "nullUser": "Deve haver um usuário registrado nesta sessão do caixa!",
+        "duplicateSessaoCaixa": "Já existe sessão do caixa nesta data.",
+        "editSessaoCaixaDataError": "A data não pode ser editada!",
         "concurrencyFailure": "Outro usuário modificou esse dado ao mesmo tempo que você. Suas mudanças foram rejeitadas, tente novamente.",
         "validation": "Erro de validação no servidor."
     }

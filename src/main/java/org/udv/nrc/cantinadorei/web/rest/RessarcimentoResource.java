@@ -2,9 +2,11 @@ package org.udv.nrc.cantinadorei.web.rest;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -23,8 +25,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.udv.nrc.cantinadorei.domain.Conta;
 import org.udv.nrc.cantinadorei.domain.Ressarcimento;
+import org.udv.nrc.cantinadorei.domain.SessaoCaixa;
 import org.udv.nrc.cantinadorei.repository.ContaRepository;
 import org.udv.nrc.cantinadorei.repository.RessarcimentoRepository;
+import org.udv.nrc.cantinadorei.repository.SessaoCaixaRepository;
 import org.udv.nrc.cantinadorei.security.AuthoritiesConstants;
 import org.udv.nrc.cantinadorei.security.SecurityUtils;
 import org.udv.nrc.cantinadorei.web.rest.errors.BadRequestAlertException;
@@ -48,6 +52,9 @@ public class RessarcimentoResource {
     @Autowired
     private ContaRepository contaRepository;
 
+    @Autowired
+    private SessaoCaixaRepository sessaoCaixaRepository;
+
     public RessarcimentoResource(RessarcimentoRepository ressarcimentoRepository) {
         this.ressarcimentoRepository = ressarcimentoRepository;
         canCRAll = Arrays.asList(AuthoritiesConstants.ADMIN, AuthoritiesConstants.OPERATOR,
@@ -65,6 +72,9 @@ public class RessarcimentoResource {
     @PreAuthorize("hasAnyRole('ROLE_DBA', 'ROLE_ADMIN', 'ROLE_OPERATOR')")
     public ResponseEntity<Ressarcimento> createRessarcimento(@Valid @RequestBody Ressarcimento ressarcimento) throws URISyntaxException {
         log.debug("REST request to save Ressarcimento : {}", ressarcimento);
+        if(!sessaoCaixaRepository.findOneByDate(LocalDate.now()).isPresent()) {
+            throw new BadRequestAlertException("Não há sessão do caixa registrada para hoje", ENTITY_NAME, "noSessaoCaixa");
+        }
         if (ressarcimento.getId() != null) {
             throw new BadRequestAlertException("A new ressarcimento cannot already have an ID", ENTITY_NAME, "idexists");
         }
@@ -73,10 +83,7 @@ public class RessarcimentoResource {
         }
 
         //Add to conta the ressarcimento value 
-        Conta contaToUpdate = ressarcimento.getConta();
-        contaToUpdate.setSaldoAtual(contaToUpdate.getSaldoAtual() + ressarcimento.getValor());
-        contaRepository.save(contaToUpdate);
-        Ressarcimento result = ressarcimentoRepository.save(ressarcimento);
+        Ressarcimento result = updateRessarcimentoData(ressarcimento);
         
         return ResponseEntity.created(new URI("/api/ressarcimentos/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
@@ -102,7 +109,11 @@ public class RessarcimentoResource {
         if(ressarcimento.getConta() == null) {
             throw new BadRequestAlertException("Apenas clientes podem ter ressarcimentos", ENTITY_NAME, "illegalAssignment");
         }
-        Ressarcimento result = ressarcimentoRepository.save(ressarcimento);
+
+        //Rollback ressarcimento and prepare to update it
+        rollbackRessarcimentoData(ressarcimento.getId());
+        Ressarcimento result = updateRessarcimentoData(ressarcimento);
+
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, ressarcimento.getId().toString()))
             .body(result);
@@ -155,11 +166,63 @@ public class RessarcimentoResource {
     @PreAuthorize("hasAnyRole('ROLE_DBA', 'ROLE_ADMIN', 'ROLE_OPERATOR')")
     public ResponseEntity<Void> deleteRessarcimento(@PathVariable Long id) {
         log.debug("REST request to delete Ressarcimento : {}", id);
-        Ressarcimento ressarcimento = ressarcimentoRepository.getOne(id);
-        Conta contaToUpdate = ressarcimento.getConta();
-        contaToUpdate.setSaldoAtual(contaToUpdate.getSaldoAtual() - ressarcimento.getValor());
-        contaRepository.save(contaToUpdate);
+        
+        //Rollback ressarcimento
+        rollbackRessarcimentoData(id);
+
         ressarcimentoRepository.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
+    }
+
+    /**
+     * Given a ressarcimento bean, the point of
+     * this method is to update the ressarcimento data
+     * by subtracting ressarcimento's conta total value 
+     * from the ressarcimentos's one
+     */
+    private Ressarcimento updateRessarcimentoData(Ressarcimento ressarcimento) {
+        //trick to get the ressarcimento's current state 
+        Conta contaToUpdate = contaRepository.findAll().stream()
+            .filter(conta -> ressarcimento.getConta().getId().equals(conta.getId()))
+            .collect(Collectors.toList()).get(0);
+        contaToUpdate.setSaldoAtual(contaToUpdate.getSaldoAtual() + ressarcimento.getValor());
+        contaRepository.save(contaToUpdate);  //save ressarcimento to conta
+
+        //Update sessaoCaixa
+        SessaoCaixa sessaoToUpdate = sessaoCaixaRepository.findAll().stream()
+            .filter(sessao -> ressarcimento.getSessaoCaixa().getId().equals(sessao.getId()))
+            .collect(Collectors.toList()).get(0);
+        sessaoToUpdate.setValorAtual(sessaoToUpdate.getValorAtual() + ressarcimento.getValor());
+        sessaoCaixaRepository.save(sessaoToUpdate);
+        return ressarcimentoRepository.save(ressarcimento);
+    }
+
+    /**
+     * Given a ressarcimento's Id, the point of 
+     * this method is to rollback (undo) the ressarcimento
+     * effects to ressarcimento's current user conta,
+     * giving back the ressarcimento's total value to 
+     * user conta's total balance.
+     * 
+     * In updateRessarcimento method, this method MUST 
+     * preceed updateRessarcimentoData method, in order to 
+     * rollback ressarcimento data an prepare to update it.
+     * 
+     * @see updateRessarcimento
+     * @see updateRessarcimentoData
+     */
+    private void rollbackRessarcimentoData(Long ressarcimentoId) {
+        //trick to avoid JPA session error
+        Ressarcimento previousRessarcimento = ressarcimentoRepository.findAll().stream()
+        .filter(ressarcimento -> ressarcimento.getId().equals(ressarcimentoId))
+        .collect(Collectors.toList()).get(0); //same as get ressarcimento by id
+        Conta contaToRollback = previousRessarcimento.getConta();
+        contaToRollback.setSaldoAtual(contaToRollback.getSaldoAtual() - previousRessarcimento.getValor());
+        contaRepository.save(contaToRollback);
+
+        //Update sessaoCaixa
+        SessaoCaixa sessaoToUpdate = previousRessarcimento.getSessaoCaixa();
+        sessaoToUpdate.setValorAtual(sessaoToUpdate.getValorAtual() - previousRessarcimento.getValor());
+        sessaoCaixaRepository.save(sessaoToUpdate);
     }
 }

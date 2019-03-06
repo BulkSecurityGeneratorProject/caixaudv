@@ -2,6 +2,7 @@ package org.udv.nrc.cantinadorei.web.rest;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -10,6 +11,7 @@ import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.udv.nrc.cantinadorei.domain.ItemCompra;
 import org.udv.nrc.cantinadorei.repository.ItemCompraRepository;
+import org.udv.nrc.cantinadorei.repository.SessaoCaixaRepository;
 import org.udv.nrc.cantinadorei.security.AuthoritiesConstants;
 import org.udv.nrc.cantinadorei.security.SecurityUtils;
 import org.udv.nrc.cantinadorei.web.rest.errors.BadRequestAlertException;
@@ -42,6 +45,9 @@ public class ItemCompraResource {
 
     private static List<String> canCRAll;
 
+    @Autowired
+    private SessaoCaixaRepository sessaoCaixaRepository;
+
     public ItemCompraResource(ItemCompraRepository itemCompraRepository) {
         this.itemCompraRepository = itemCompraRepository;
         canCRAll = Arrays.asList(AuthoritiesConstants.ADMIN, AuthoritiesConstants.OPERATOR,
@@ -59,6 +65,9 @@ public class ItemCompraResource {
     @PreAuthorize("hasAnyRole('ROLE_DBA', 'ROLE_ADMIN', 'ROLE_OPERATOR')")
     public ResponseEntity<ItemCompra> createItemCompra(@Valid @RequestBody ItemCompra itemCompra) throws URISyntaxException {
         log.debug("REST request to save ItemCompra : {}", itemCompra);
+        if(!sessaoCaixaRepository.findOneByDate(LocalDate.now()).isPresent()) {
+            throw new BadRequestAlertException("Não há sessão do caixa registrada para hoje", ENTITY_NAME, "noSessaoCaixa");
+        }
         if (itemCompra.getId() != null) {
             throw new BadRequestAlertException("A new itemCompra cannot already have an ID", ENTITY_NAME, "idexists");
         }
